@@ -233,7 +233,7 @@ class DatabaseStore {
       role: user.role,
       phone: user.phone,
       avatar_url: user.avatarUrl,
-    }).then(({ error }) => {
+    }).then(({ error }: any) => {
       if (error) console.error('Supabase profile upsert error:', error);
     });
 
@@ -253,7 +253,7 @@ class DatabaseStore {
       role: user.role,
       phone: user.phone || null,
       avatar_url: user.avatarUrl || null,
-    }).then(({ error }) => {
+    }).then(({ error }: any) => {
       if (error) console.error('Supabase profile update error:', error);
     });
 
@@ -517,7 +517,7 @@ class DatabaseStore {
       is_verified: newBusiness.isVerified,
       is_featured: newBusiness.isFeatured,
       status: newBusiness.status,
-    }).then(({ error }) => {
+    }).then(({ error }: any) => {
       if (error) console.error('Supabase business insert error:', error);
     });
 
@@ -600,7 +600,7 @@ class DatabaseStore {
     if (biz.coverImage !== undefined) supabaseUpdates.cover_image = biz.coverImage;
     if (biz.logo !== undefined) supabaseUpdates.logo = biz.logo;
 
-    supabaseAdmin.from('businesses').update(supabaseUpdates).eq('id', biz.id).then(({ error }) => {
+    supabaseAdmin.from('businesses').update(supabaseUpdates).eq('id', biz.id).then(({ error }: any) => {
       if (error) console.error('Supabase business update error:', error);
     });
 
