@@ -1,0 +1,6 @@
+{
+  "name": "RankAuction India - Paid Website Ranking & Bidding Marketplace",
+  "description": "Premier local business discovery, sponsored rankings, and live bidding marketplace across Indian cities.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
