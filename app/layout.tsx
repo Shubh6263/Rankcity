@@ -124,9 +124,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </AuthProvider>
           </ClerkProvider>
         ) : (
-          <AuthProvider>
-            <LocationProvider>{children}</LocationProvider>
-          </AuthProvider>
+          <LocationProvider>{children}</LocationProvider>
         )}
       </body>
     </html>
