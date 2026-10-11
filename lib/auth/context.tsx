@@ -44,6 +44,11 @@ const AuthContext = createContext<AuthContextType>({
 });
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
+  if (!process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY) return <>{children}</>;
+  return <ClerkAuthProvider>{children}</ClerkAuthProvider>;
+}
+
+function ClerkAuthProvider({ children }: { children: React.ReactNode }) {
   const { user: clerkUser, isLoaded: isClerkLoaded, isSignedIn } = useUser();
   const { signOut } = useClerkAuth();
 

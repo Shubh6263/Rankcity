@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Show, SignInButton } from '@clerk/nextjs';
+import { Show, SignInButton } from '@/lib/auth/ui';
 import { Navbar } from '@/components/layout/Navbar';
 import { Footer } from '@/components/layout/Footer';
 import { Category, LocationHierarchy, Business } from '@/types';

@@ -4,12 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
 import { useAuth } from '@/lib/auth/context';
-import {
-  SignInButton,
-  SignUpButton,
-  Show,
-  UserButton,
-} from '@clerk/nextjs';
+import { SignInButton, SignUpButton, Show, UserButton } from '@/lib/auth/ui';
 import {
   MapPin,
   ChevronDown,

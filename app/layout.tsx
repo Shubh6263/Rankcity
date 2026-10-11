@@ -117,11 +117,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body suppressHydrationWarning className="min-h-full flex flex-col font-sans bg-white text-neutral-900 selection:bg-blue-600 selection:text-white">
-        <ClerkProvider>
+        {process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY ? (
+          <ClerkProvider>
+            <AuthProvider>
+              <LocationProvider>{children}</LocationProvider>
+            </AuthProvider>
+          </ClerkProvider>
+        ) : (
           <AuthProvider>
             <LocationProvider>{children}</LocationProvider>
           </AuthProvider>
-        </ClerkProvider>
+        )}
       </body>
     </html>
   );
