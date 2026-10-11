@@ -9,19 +9,24 @@ const isProtectedRoute = createRouteMatcher([
   "/claim(.*)",
 ]);
 
-export default clerkMiddleware(async (auth, req) => {
-  if (isProtectedRoute(req)) {
-    const { userId, redirectToSignIn } = await auth();
-    if (!userId) {
+const hasClerkKey = Boolean(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);
+
+export default hasClerkKey
+  ? clerkMiddleware(async (auth, req) => {
+      if (!isProtectedRoute(req)) return;
+
+      const { userId, redirectToSignIn } = await auth();
+      if (userId) return;
+
       if (typeof redirectToSignIn === "function") {
         return redirectToSignIn({ returnBackUrl: req.url });
       }
+
       const signInUrl = new URL("/sign-in", req.url);
       signInUrl.searchParams.set("redirect_url", req.nextUrl.pathname + req.nextUrl.search);
       return NextResponse.redirect(signInUrl);
-    }
-  }
-});
+    })
+  : () => NextResponse.next();
 
 export const config = {
   matcher: [
