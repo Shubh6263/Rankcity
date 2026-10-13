@@ -14,7 +14,7 @@ export function UpdatePromptToast() {
   return (
     <div
       role="alert"
-      className="fixed bottom-4 left-4 right-4 sm:left-auto sm:right-6 sm:bottom-6 sm:max-w-md z-50 animate-in fade-in slide-in-from-bottom-4 duration-200"
+      className="fixed bottom-20 left-4 right-4 sm:left-auto sm:right-6 sm:bottom-6 sm:max-w-md z-50 animate-in fade-in slide-in-from-bottom-4 duration-200"
     >
       <div className="bg-neutral-900/95 text-white backdrop-blur-md border border-neutral-700/80 rounded-2xl p-4 shadow-2xl flex items-center justify-between gap-3">
         <div className="flex items-center gap-3 min-w-0">

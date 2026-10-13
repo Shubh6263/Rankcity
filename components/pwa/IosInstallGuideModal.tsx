@@ -40,7 +40,7 @@ export function IosInstallGuideModal() {
       <div className="bg-white rounded-3xl max-w-sm w-full p-6 shadow-2xl border border-neutral-100 text-neutral-900 animate-in slide-in-from-bottom-6 sm:zoom-in-95 duration-200">
         <div className="flex items-start justify-between mb-4">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-2xl bg-blue-600 flex items-center justify-center shadow-md p-1">
+            <div className="w-11 h-11 rounded-2xl bg-white border border-neutral-100 flex items-center justify-center shadow-2xs p-1">
               <img
                 src="/icons/icon-96x96.png"
                 alt="RankCity"
