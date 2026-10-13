@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
 import { useAuth } from '@/lib/auth/context';
 import { InstallAppButton } from '@/components/pwa/InstallAppButton';
-import { AppBottomNav } from '@/components/layout/AppBottomNav';
 import { MobileLocationDrawer } from '@/components/layout/MobileLocationDrawer';
 import { AppSidebar } from '@/components/layout/AppSidebar';
 import { NotificationDrawer } from '@/components/layout/NotificationDrawer';
@@ -275,8 +274,13 @@ export function Navbar() {
     },
   ];
 
-
-  const toggleMenu = (menu: 'categories' | 'cities' | 'business' | 'citySelect' | 'account') => {
+  // Customer Mobile Bottom Navigation Bar items:
+  const mobileBottomNav = [
+    { label: 'Home', href: '/', icon: HomeIcon, isActive: pathname === '/' },
+    { label: 'Explore', href: '/explore', icon: Compass, isActive: pathname.startsWith('/explore') || pathname.includes('/hotels') },
+    { label: 'Saved', href: '/saved', icon: Heart, isActive: pathname === '/saved' },
+    { label: 'Account', href: '/account', icon: User, isActive: pathname === '/account' },
+  ];  const toggleMenu = (menu: 'categories' | 'cities' | 'business' | 'citySelect' | 'account') => {
     setActiveMenu((prev) => (prev === menu ? null : menu));
   };
 
@@ -706,8 +710,27 @@ export function Navbar() {
         onUnreadCountChange={setUnreadCount}
       />
 
-      {/* Floating Circular-Bordered App Bottom Navigation Bar */}
-      <AppBottomNav />
+      {/* Customer Mobile Bottom Navigation Bar: Home | Explore | Saved | Account */}
+      <nav
+        aria-label="Mobile Navigation"
+        className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-neutral-200 py-1.5 px-2 flex items-center justify-around shadow-lg"
+      >
+        {mobileBottomNav.map((item, idx) => {
+          const Icon = item.icon;
+          return (
+            <Link
+              key={idx}
+              href={item.href}
+              className={`flex flex-col items-center justify-center p-1.5 rounded-lg text-center transition-colors ${
+                item.isActive ? 'text-blue-600 font-bold' : 'text-neutral-500 hover:text-neutral-900'
+              }`}
+            >
+              <Icon className="w-5 h-5 mb-0.5" />
+              <span className="text-[10px] tracking-tight">{item.label}</span>
+            </Link>
+          );
+        })}
+      </nav>
 
       {/* Mobile City & Location Bottom Drawer */}
       <MobileLocationDrawer

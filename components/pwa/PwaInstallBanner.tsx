@@ -28,7 +28,7 @@ export function PwaInstallBanner() {
   return (
     <aside
       aria-label="Install App"
-      className="fixed bottom-20 left-4 right-4 sm:bottom-6 sm:left-auto sm:right-6 sm:w-84 z-50 animate-in fade-in slide-in-from-bottom-3 duration-200"
+      className="fixed bottom-16 left-3 right-3 sm:bottom-6 sm:left-auto sm:right-6 sm:w-80 z-50 animate-in fade-in slide-in-from-bottom-2 duration-200"
     >
       <div className="bg-white/95 backdrop-blur-xl border border-neutral-200/90 rounded-2xl p-2.5 sm:p-3 shadow-[0_12px_32px_-4px_rgba(0,0,0,0.14)] ring-1 ring-black/5 flex items-center justify-between gap-3">
         {/* App Icon */}
