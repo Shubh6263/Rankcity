@@ -270,8 +270,64 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Section 1: Sponsored Near You 🔥 (Visually Labeled as Sponsored) */}
-      <section className="pt-14 pb-12 bg-white">
+      {/* Standalone Search Bar — above Discover sections */}
+      <section className="bg-white pt-10 pb-2">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6">
+          <form
+            onSubmit={handleSearchSubmit}
+            className="w-full bg-white rounded-2xl shadow-md border border-neutral-200 p-2 sm:p-2.5 flex flex-col sm:flex-row items-center gap-2"
+          >
+            <div className="flex items-center gap-2.5 px-3.5 flex-1 w-full">
+              <Search className="w-5 h-5 text-neutral-400 shrink-0" />
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="Search hotels, restaurants, hospitals..."
+                className="w-full text-sm text-neutral-800 placeholder:text-neutral-400 bg-transparent border-0 focus:outline-none py-2.5"
+              />
+            </div>
+            <div className="hidden sm:block h-7 w-px bg-neutral-200 shrink-0" />
+            <div className="flex items-center gap-1.5 px-3 border-t sm:border-t-0 border-neutral-200 w-full sm:w-auto">
+              <button
+                type="button"
+                onClick={requestCurrentLocation}
+                disabled={isLocLoading}
+                title="Detect GPS location"
+                className="p-1.5 hover:bg-neutral-100 rounded-lg text-blue-600 transition-colors cursor-pointer shrink-0"
+              >
+                {isLocLoading ? (
+                  <Loader2 className="w-4 h-4 animate-spin text-blue-600" />
+                ) : locSource === 'browser_gps' ? (
+                  <Navigation2 className="w-4 h-4 text-emerald-600 fill-emerald-600" />
+                ) : (
+                  <Navigation2 className="w-4 h-4 text-blue-600" />
+                )}
+              </button>
+              <select
+                value={selectedCity}
+                onChange={(e) => setSelectedCity(e.target.value)}
+                className="text-xs font-semibold bg-transparent border-0 focus:outline-none text-neutral-800 py-2.5 cursor-pointer capitalize"
+              >
+                <option value="indore">Indore</option>
+                <option value="bhopal">Bhopal</option>
+                <option value="mumbai">Mumbai</option>
+                <option value="bengaluru">Bengaluru</option>
+                <option value="delhi">New Delhi</option>
+              </select>
+            </div>
+            <button
+              type="submit"
+              className="w-full sm:w-auto px-7 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-xl text-xs sm:text-sm font-bold transition-all shadow-md hover:shadow-lg whitespace-nowrap cursor-pointer flex items-center justify-center"
+            >
+              Search
+            </button>
+          </form>
+        </div>
+      </section>
+
+      {/* Section 1: Sponsored Near You 🔥 */}
+      <section className="pt-10 pb-12 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between mb-7">
             <div className="flex items-center gap-2">
