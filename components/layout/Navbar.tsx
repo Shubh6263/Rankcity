@@ -296,24 +296,14 @@ export function Navbar() {
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-18 flex items-center justify-between">
-          {/* Left: Hamburger (Mobile) + Brand Wordmark + Navigation Menus */}
+          {/* Left: Hamburger + Brand Wordmark + Navigation Menus */}
           <div className="flex items-center gap-1.5 sm:gap-3 lg:gap-8 xl:gap-9 shrink-0 min-w-0">
-            {/* App Sidebar Menu Hamburger Button (Mobile/Tablet only) */}
+            {/* Sidebar Hamburger Button — single node, no responsive-hiding, identical on SSR + client */}
             <button
               type="button"
               onClick={() => setIsSidebarOpen(true)}
-              className="lg:hidden -ml-1 p-2 text-neutral-700 hover:text-neutral-950 hover:bg-neutral-100 rounded-xl transition-colors cursor-pointer shrink-0 flex items-center justify-center"
-              aria-label="Open App Sidebar Menu"
-              title="Open Menu"
-            >
-              <Menu className="w-5.5 h-5.5" />
-            </button>
-            {/* Desktop Sidebar Trigger (always visible on lg+) */}
-            <button
-              type="button"
-              onClick={() => setIsSidebarOpen(true)}
-              className="hidden lg:flex -ml-1 p-2 text-neutral-700 hover:text-neutral-950 hover:bg-neutral-100 rounded-xl transition-colors cursor-pointer shrink-0 items-center justify-center"
-              aria-label="Open App Sidebar Menu"
+              className="-ml-1 p-2 text-neutral-700 hover:text-neutral-950 hover:bg-neutral-100 rounded-xl transition-colors cursor-pointer shrink-0 flex items-center justify-center"
+              aria-label="Open sidebar menu"
               title="Open Menu"
             >
               <Menu className="w-5.5 h-5.5" />
