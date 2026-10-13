@@ -3,7 +3,7 @@
  * Version: 1.1.0
  */
 
-const VERSION = 'rankcity-v1.4';
+const VERSION = 'rankcity-v1.5';
 const STATIC_CACHE = `${VERSION}-static`;
 const RUNTIME_CACHE = `${VERSION}-runtime`;
 const IMAGE_CACHE = `${VERSION}-images`;
@@ -118,11 +118,10 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // In local development on localhost, bypass SW for HTML navigations to ensure live Next.js dev server updates
+  // In local development, bypass SW entirely so Next.js dev server always serves fresh HTML/JS/CSS
+  // This permanently eliminates hydration mismatches caused by stale SW cache on localhost
   if (url.hostname === 'localhost' || url.hostname === '127.0.0.1') {
-    if (request.mode === 'navigate') {
-      return;
-    }
+    return; // Let browser handle all localhost requests natively
   }
 
   // 1. Navigation requests (HTML pages)
