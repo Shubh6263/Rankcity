@@ -240,8 +240,13 @@ class LocationDatabaseService {
     return this.districts.find((d) => d.id === id);
   }
 
-  getCities(params: { districtId?: string; search?: string; cityType?: string; isActive?: boolean; limit?: number; offset?: number } = {}) {
+  getCities(params: { stateId?: string; districtId?: string; search?: string; cityType?: string; isActive?: boolean; limit?: number; offset?: number } = {}) {
     let result = this.cities.filter((c) => (params.isActive !== undefined ? c.isActive === params.isActive : true));
+
+    if (params.stateId) {
+      const stateDistricts = new Set(this.districts.filter((d) => d.stateId === params.stateId).map((d) => d.id));
+      result = result.filter((c) => stateDistricts.has(c.districtId));
+    }
 
     if (params.districtId) {
       result = result.filter((c) => c.districtId === params.districtId);

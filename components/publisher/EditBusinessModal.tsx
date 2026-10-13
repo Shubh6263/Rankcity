@@ -54,6 +54,46 @@ export const EditBusinessModal: React.FC<EditBusinessModalProps> = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const [availableCities, setAvailableCities] = useState<Array<{ id: string; name: string }>>([]);
+  const [loadingCities, setLoadingCities] = useState(false);
+
+  useEffect(() => {
+    if (!state) return;
+    let isCancelled = false;
+    setLoadingCities(true);
+
+    fetch('/api/locations/states?limit=100')
+      .then((res) => res.json())
+      .then((data) => {
+        if (isCancelled) return;
+        const matchingState = (data.items || []).find(
+          (s: any) =>
+            s.name.toLowerCase() === state.toLowerCase() ||
+            s.code.toLowerCase() === state.toLowerCase()
+        );
+        const stateId = matchingState?.id;
+        const url = stateId
+          ? `/api/locations/cities?stateId=${stateId}&limit=200`
+          : `/api/locations/cities?limit=200`;
+
+        return fetch(url).then((r) => r.json());
+      })
+      .then((cityData) => {
+        if (isCancelled) return;
+        if (cityData?.items) {
+          setAvailableCities(cityData.items);
+        }
+      })
+      .catch(() => {})
+      .finally(() => {
+        if (!isCancelled) setLoadingCities(false);
+      });
+
+    return () => {
+      isCancelled = true;
+    };
+  }, [state]);
+
   const selectedCategoryObj = categories.find((c) => c.id === categoryId);
 
   const handleAddPhotoUrl = () => {
@@ -386,29 +426,65 @@ export const EditBusinessModal: React.FC<EditBusinessModalProps> = ({
                 </div>
 
                 <div>
-                  <label className="block font-semibold text-neutral-700 mb-1">
-                    City *
-                  </label>
-                  <select
-                    value={locationId}
-                    onChange={(e) => {
-                      setLocationId(e.target.value);
-                      const l = locations.find((loc) => loc.id === e.target.value);
-                      if (l) {
-                        setCity(l.city);
-                        if (l.state) setState(l.state);
-                      }
-                    }}
-                    className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none"
-                  >
-                    {locations.map((loc) => (
-                      <option key={loc.id} value={loc.id}>
-                        {loc.locality && loc.locality !== 'All Localities'
-                          ? `${loc.locality}, ${loc.city}`
-                          : loc.city} ({loc.state})
-                      </option>
-                    ))}
-                  </select>
+                  <div className="flex items-center justify-between mb-1">
+                    <label className="block font-semibold text-neutral-700">
+                      City / Town *
+                    </label>
+                    {loadingCities && (
+                      <span className="text-[10px] text-blue-600 font-medium">Loading cities...</span>
+                    )}
+                  </div>
+                  {availableCities.length > 0 ? (
+                    <div className="space-y-1.5">
+                      <select
+                        value={availableCities.some((c) => c.name.toLowerCase() === city.toLowerCase()) ? city : '__custom__'}
+                        onChange={(e) => {
+                          if (e.target.value !== '__custom__') {
+                            setCity(e.target.value);
+                            const matched = availableCities.find((c) => c.name === e.target.value);
+                            if (matched) setLocationId(matched.id);
+                          } else {
+                            setCity('');
+                          }
+                        }}
+                        className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none bg-white font-medium text-neutral-900"
+                      >
+                        <option value="">-- Select City in {state} ({availableCities.length} available) --</option>
+                        {availableCities.map((c) => (
+                          <option key={c.id} value={c.name}>
+                            {c.name}
+                          </option>
+                        ))}
+                        <option value="__custom__">+ Enter Other / Custom City...</option>
+                      </select>
+
+                      {(!availableCities.some((c) => c.name.toLowerCase() === city.toLowerCase()) || city === '') && (
+                        <input
+                          type="text"
+                          value={city}
+                          onChange={(e) => {
+                            setCity(e.target.value);
+                            setLocationId(`cty_${e.target.value.toLowerCase().replace(/[^a-z0-9]+/g, '_')}`);
+                          }}
+                          placeholder={`Type city name in ${state} (e.g. ${availableCities[0]?.name || 'City'})`}
+                          required
+                          className="w-full px-3 py-2 border border-blue-400 bg-blue-50/20 rounded-lg focus:outline-none text-neutral-900 font-medium"
+                        />
+                      )}
+                    </div>
+                  ) : (
+                    <input
+                      type="text"
+                      value={city}
+                      onChange={(e) => {
+                        setCity(e.target.value);
+                        setLocationId(`cty_${e.target.value.toLowerCase().replace(/[^a-z0-9]+/g, '_')}`);
+                      }}
+                      placeholder={`Enter City / Town in ${state}`}
+                      required
+                      className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none font-medium"
+                    />
+                  )}
                 </div>
 
                 <div>
