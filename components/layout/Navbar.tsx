@@ -291,13 +291,24 @@ export function Navbar() {
         }`}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-18 flex items-center justify-between">
-          {/* Left: Brand Wordmark + Navigation Menus */}
-          <div className="flex items-center gap-6 lg:gap-8 xl:gap-9">
+          {/* Left: Hamburger (Mobile) + Brand Wordmark + Navigation Menus */}
+          <div className="flex items-center gap-2 sm:gap-3 lg:gap-8 xl:gap-9">
+            {/* App Sidebar Menu Hamburger Button (Left side) */}
+            <button
+              type="button"
+              onClick={() => setIsSidebarOpen(true)}
+              className="lg:hidden -ml-1 p-2 text-neutral-700 hover:text-neutral-950 hover:bg-neutral-100 rounded-xl transition-colors cursor-pointer shrink-0"
+              aria-label="Open App Sidebar Menu"
+              title="Open Menu"
+            >
+              <Menu className="w-5.5 h-5.5" />
+            </button>
+
             <Link href="/" className="flex items-center gap-2 group shrink-0 py-1">
               <img
                 src="/rankcity-logo.png"
                 alt="RankCity - Discover Local Businesses"
-                className="h-9 sm:h-10 w-auto object-contain transition-transform group-hover:scale-102"
+                className="h-8 sm:h-9 md:h-10 w-auto object-contain transition-transform group-hover:scale-102"
               />
             </Link>
 
@@ -676,16 +687,6 @@ export function Navbar() {
                   <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-blue-600" />
                 </span>
               )}
-            </button>
-
-            {/* App Sidebar Menu Toggle Button */}
-            <button
-              type="button"
-              onClick={() => setIsSidebarOpen(true)}
-              className="lg:hidden p-1.5 text-neutral-600 hover:text-neutral-900 rounded-lg cursor-pointer"
-              aria-label="Open App Sidebar Menu"
-            >
-              <Menu className="w-5 h-5" />
             </button>
           </div>
         </div>
