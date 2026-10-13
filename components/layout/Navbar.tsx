@@ -7,6 +7,8 @@ import { useAuth } from '@/lib/auth/context';
 import { InstallAppButton } from '@/components/pwa/InstallAppButton';
 import { AppBottomNav } from '@/components/layout/AppBottomNav';
 import { MobileLocationDrawer } from '@/components/layout/MobileLocationDrawer';
+import { AppSidebar } from '@/components/layout/AppSidebar';
+import { NotificationDrawer } from '@/components/layout/NotificationDrawer';
 import {
   SignInButton,
   SignUpButton,
@@ -14,6 +16,7 @@ import {
   UserButton,
 } from '@clerk/nextjs';
 import {
+  Bell,
   MapPin,
   ChevronDown,
   Menu,
@@ -73,8 +76,10 @@ export function Navbar() {
 
   const [scrolled, setScrolled] = useState(false);
   const [activeMenu, setActiveMenu] = useState<'categories' | 'cities' | 'business' | 'citySelect' | 'account' | null>(null);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isLocationDrawerOpen, setIsLocationDrawerOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(2);
 
   const navRef = useRef<HTMLDivElement>(null);
 
@@ -101,7 +106,8 @@ export function Navbar() {
   // Close menus on route change
   useEffect(() => {
     setActiveMenu(null);
-    setIsMobileMenuOpen(false);
+    setIsSidebarOpen(false);
+    setIsNotificationsOpen(false);
   }, [pathname]);
 
   const cities = [
@@ -655,128 +661,49 @@ export function Navbar() {
               </div>
             </Show>
 
-            {/* Mobile Menu Hamburger Toggle */}
+            {/* Notification Bell Button */}
             <button
               type="button"
-              onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="lg:hidden p-1.5 text-neutral-600 hover:text-neutral-900 rounded-lg cursor-pointer"
-              aria-label="Toggle Navigation"
+              onClick={() => setIsNotificationsOpen(true)}
+              aria-label="Open notifications"
+              className="relative p-2 text-neutral-600 hover:text-neutral-900 rounded-full hover:bg-neutral-100 transition-colors cursor-pointer"
+              title="Notifications"
             >
-              {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+              <Bell className="w-4.5 h-4.5" />
+              {unreadCount > 0 && (
+                <span className="absolute top-1 right-1 flex h-2.5 w-2.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75" />
+                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-blue-600" />
+                </span>
+              )}
+            </button>
+
+            {/* App Sidebar Menu Toggle Button */}
+            <button
+              type="button"
+              onClick={() => setIsSidebarOpen(true)}
+              className="lg:hidden p-1.5 text-neutral-600 hover:text-neutral-900 rounded-lg cursor-pointer"
+              aria-label="Open App Sidebar Menu"
+            >
+              <Menu className="w-5 h-5" />
             </button>
           </div>
         </div>
-
-        {/* Mobile Top Drawer */}
-        {isMobileMenuOpen && (
-          <div className="lg:hidden border-t border-neutral-100 bg-white px-4 pt-3 pb-6 space-y-3">
-            <nav className="flex flex-col space-y-2 text-sm font-medium text-neutral-700">
-              <Link
-                href="/"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="px-3 py-2 rounded-xl hover:bg-neutral-50 hover:text-blue-600"
-              >
-                Home
-              </Link>
-              <Link
-                href="/explore"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="px-3 py-2 rounded-xl hover:bg-neutral-50 hover:text-blue-600"
-              >
-                Explore Businesses
-              </Link>
-              <Link
-                href="/categories"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="px-3 py-2 rounded-xl hover:bg-neutral-50 hover:text-blue-600"
-              >
-                All Categories
-              </Link>
-              <Link
-                href="/pricing"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="px-3 py-2 rounded-xl hover:bg-neutral-50 hover:text-blue-600"
-              >
-                Pricing & Plans
-              </Link>
-              <Link
-                href="/how-it-works"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="px-3 py-2 rounded-xl hover:bg-neutral-50 hover:text-blue-600"
-              >
-                How Rankings Work
-              </Link>
-              <Link
-                href="/saved"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="px-3 py-2 rounded-xl hover:bg-neutral-50 hover:text-blue-600"
-              >
-                Saved Businesses
-              </Link>
-              <Show when="signed-in">
-                <Link
-                  href="/publisher"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="px-3 py-2 rounded-xl hover:bg-neutral-50 hover:text-blue-600 font-semibold text-blue-600"
-                >
-                  For Business / Owner Portal
-                </Link>
-              </Show>
-              <Link
-                href="/contact"
-                onClick={() => setIsMobileMenuOpen(false)}
-                className="px-3 py-2 rounded-xl hover:bg-neutral-50 hover:text-blue-600"
-              >
-                Help & Support
-              </Link>
-
-              {/* Mobile Add Business CTA */}
-              <div className="pt-2 space-y-2">
-                <Link
-                  href="/add-business"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className="w-full py-2.5 px-4 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-xs text-center flex items-center justify-center gap-1.5"
-                >
-                  <PlusCircle className="w-4 h-4" />
-                  <span>Add Your Business (Free)</span>
-                </Link>
-                <InstallAppButton
-                  variant="outline"
-                  size="md"
-                  className="w-full justify-center bg-neutral-50 border-neutral-200"
-                />
-              </div>
-
-              {/* Mobile Auth Status */}
-              <Show when="signed-in">
-                <div className="pt-2 border-t border-neutral-100 flex items-center justify-between px-3">
-                  <Link
-                    href="/profile"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className="flex items-center gap-2 text-xs text-blue-600 font-bold hover:underline"
-                  >
-                    <User className="w-4 h-4" />
-                    <span>Edit Profile</span>
-                  </Link>
-                  <UserButton />
-                </div>
-              </Show>
-              <Show when="signed-out">
-                <div className="pt-2 border-t border-neutral-100">
-                  <SignInButton mode="modal">
-                    <button
-                      type="button"
-                      className="w-full text-center px-4 py-2 text-xs font-bold text-blue-600 bg-blue-50 hover:bg-blue-100 rounded-xl transition-colors cursor-pointer"
-                    >
-                      Sign In / Register
-                    </button>
-                  </SignInButton>
-                </div>
-              </Show>
-            </nav>
-          </div>
-        )}
       </header>
+
+      {/* App Slide-Over Sidebar Menu */}
+      <AppSidebar
+        isOpen={isSidebarOpen}
+        onClose={() => setIsSidebarOpen(false)}
+        onOpenLocationDrawer={() => setIsLocationDrawerOpen(true)}
+      />
+
+      {/* App Notification Center Drawer */}
+      <NotificationDrawer
+        isOpen={isNotificationsOpen}
+        onClose={() => setIsNotificationsOpen(false)}
+        onUnreadCountChange={setUnreadCount}
+      />
 
       {/* Floating Circular-Bordered App Bottom Navigation Bar */}
       <AppBottomNav />
