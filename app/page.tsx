@@ -169,20 +169,14 @@ export default function HomePage() {
         </div>
 
         <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 text-center flex flex-col items-center">
-          <span className="text-xs font-bold uppercase tracking-widest text-blue-400 mb-2">
+          <span className="text-xs font-bold uppercase tracking-widest text-blue-400 mb-6">
             What's around you?
           </span>
-          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight leading-tight max-w-3xl drop-shadow-sm">
-            Discover the Best Businesses in Your City
-          </h1>
-          <p className="mt-3.5 text-sm sm:text-base text-neutral-200 max-w-2xl font-normal leading-relaxed drop-shadow-sm">
-            Top-rated, trusted and verified local businesses — all in one place.
-          </p>
 
-          {/* Unified Search Engine Bar */}
+          {/* Search bar — above heading text */}
           <form
             onSubmit={handleSearchSubmit}
-            className="mt-8 w-full max-w-3xl bg-white p-2 sm:p-2.5 rounded-2xl shadow-2xl flex flex-col sm:flex-row items-center gap-2 border border-neutral-100"
+            className="w-full max-w-3xl bg-white p-2 sm:p-2.5 rounded-2xl shadow-2xl flex flex-col sm:flex-row items-center gap-2 border border-neutral-100"
           >
             <div className="flex items-center gap-2.5 px-3.5 flex-1 w-full">
               <Search className="w-5 h-5 text-neutral-400 shrink-0" />
@@ -242,6 +236,14 @@ export default function HomePage() {
               <span>Using your live GPS location: <strong>{userArea}</strong> in {userCity}</span>
             </div>
           )}
+
+          {/* Heading text — below search bar */}
+          <h1 className="mt-8 text-3xl sm:text-5xl lg:text-6xl font-black text-white tracking-tight leading-tight max-w-3xl drop-shadow-sm">
+            Discover the Best Businesses in Your City
+          </h1>
+          <p className="mt-3.5 text-sm sm:text-base text-neutral-200 max-w-2xl font-normal leading-relaxed drop-shadow-sm">
+            Top-rated, trusted and verified local businesses — all in one place.
+          </p>
         </div>
       </section>
 
