@@ -3,7 +3,7 @@
  * Version: 1.1.0
  */
 
-const VERSION = 'rankcity-v1.1';
+const VERSION = 'rankcity-v1.2';
 const STATIC_CACHE = `${VERSION}-static`;
 const RUNTIME_CACHE = `${VERSION}-runtime`;
 const IMAGE_CACHE = `${VERSION}-images`;
@@ -105,6 +105,15 @@ self.addEventListener('fetch', (event) => {
     url.hostname.includes('clerk') ||
     url.hostname.includes('googleapis') ||
     url.hostname.includes('supabase')
+  ) {
+    return;
+  }
+
+  // In development, ignore dev-specific versioned chunks and HMR requests
+  if (
+    url.searchParams.has('v') ||
+    url.pathname.includes('/_next/webpack-hmr') ||
+    url.pathname.includes('/__nextjs_original-stack-frame')
   ) {
     return;
   }
