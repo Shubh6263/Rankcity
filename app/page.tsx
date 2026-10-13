@@ -47,19 +47,11 @@ export default function HomePage() {
   const router = useRouter();
   const { city: userCity, area: userArea, coords: userCoords, isLoading: isLocLoading, source: locSource, requestCurrentLocation } = useUserLocation();
   
-  // Instant synchronous initialization from memory/localStorage cache (0ms first paint!)
-  const [categories, setCategories] = useState<Category[]>(() => {
-    return getCachedCategories()?.categories || [];
-  });
-  const [locations, setLocations] = useState<LocationHierarchy[]>(() => {
-    return getCachedCategories()?.locations || [];
-  });
-  const [businesses, setBusinesses] = useState<Business[]>(() => {
-    return getCachedBusinesses() || [];
-  });
-  const [isLoading, setIsLoading] = useState(() => {
-    return (getCachedBusinesses() || []).length === 0;
-  });
+  // Hydration-safe initial state (identical between server SSR and client first pass)
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [locations, setLocations] = useState<LocationHierarchy[]>([]);
+  const [businesses, setBusinesses] = useState<Business[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCity, setSelectedCity] = useState(userCity.toLowerCase());
   const [favorites, setFavorites] = useState<Record<string, boolean>>({});
@@ -69,6 +61,19 @@ export default function HomePage() {
   }, [userCity]);
 
   useEffect(() => {
+    // 1. Immediately hydrate from client cache (0ms instant display without SSR hydration mismatch)
+    const cachedBiz = getCachedBusinesses();
+    if (cachedBiz && cachedBiz.length > 0) {
+      setBusinesses(cachedBiz);
+      setIsLoading(false);
+    }
+    const cachedCat = getCachedCategories();
+    if (cachedCat) {
+      setCategories(cachedCat.categories);
+      setLocations(cachedCat.locations);
+    }
+
+    // 2. Fresh background revalidation from API
     async function loadData() {
       try {
         const [cRes, bRes] = await Promise.all([

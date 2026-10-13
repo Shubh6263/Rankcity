@@ -50,17 +50,19 @@ export function NotificationDrawer({
   onClose,
   onUnreadCountChange,
 }: NotificationDrawerProps) {
-  const [notifications, setNotifications] = useState<NotificationItem[]>(() => {
-    if (typeof window !== 'undefined') {
-      try {
-        const saved = localStorage.getItem('rankcity_notifications');
-        if (saved) return JSON.parse(saved);
-      } catch {
-        // ignore
+  const [notifications, setNotifications] = useState<NotificationItem[]>(INITIAL_NOTIFICATIONS);
+
+  // Hydrate persisted notifications from localStorage after mount
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('rankcity_notifications');
+      if (saved) {
+        setNotifications(JSON.parse(saved));
       }
+    } catch {
+      // ignore
     }
-    return INITIAL_NOTIFICATIONS;
-  });
+  }, []);
 
   const unreadCount = notifications.filter((n) => !n.read).length;
 

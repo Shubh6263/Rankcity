@@ -43,19 +43,11 @@ function SearchResultsContent() {
   const [query, setQuery] = useState(initialQ);
   const [city, setCity] = useState(initialCity);
   
-  // Instant synchronous initialization from memory/localStorage cache (0ms first paint!)
-  const [businesses, setBusinesses] = useState<Business[]>(() => {
-    return getCachedBusinesses() || [];
-  });
-  const [categories, setCategories] = useState<Category[]>(() => {
-    return getCachedCategories()?.categories || [];
-  });
-  const [locations, setLocations] = useState<LocationHierarchy[]>(() => {
-    return getCachedCategories()?.locations || [];
-  });
-  const [isLoading, setIsLoading] = useState(() => {
-    return (getCachedBusinesses() || []).length === 0;
-  });
+  // Hydration-safe initial state (identical between server SSR and client first pass)
+  const [businesses, setBusinesses] = useState<Business[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [locations, setLocations] = useState<LocationHierarchy[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [isMapView, setIsMapView] = useState(false);
   const [showMobileFilters, setShowMobileFilters] = useState(false);
   const [selectedRating, setSelectedRating] = useState<number | null>(null);
@@ -67,6 +59,19 @@ function SearchResultsContent() {
   const [showAllLocalities, setShowAllLocalities] = useState(false);
 
   useEffect(() => {
+    // 1. Immediately hydrate from client cache (0ms instant display without SSR hydration mismatch)
+    const cachedBiz = getCachedBusinesses();
+    if (cachedBiz && cachedBiz.length > 0) {
+      setBusinesses(cachedBiz);
+      setIsLoading(false);
+    }
+    const cachedCat = getCachedCategories();
+    if (cachedCat) {
+      setCategories(cachedCat.categories);
+      setLocations(cachedCat.locations);
+    }
+
+    // 2. Fresh background revalidation from API
     async function loadData() {
       try {
         const [bRes, cRes] = await Promise.all([

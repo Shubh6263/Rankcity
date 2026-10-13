@@ -51,14 +51,10 @@ export default function BusinessProfilePage({ params }: BusinessProfilePageProps
   const { slug } = use(params);
   const { currentUser } = useAuth();
   
-  // Instant render from cache if navigated from home/search (0ms first paint!)
-  const [business, setBusiness] = useState<Business | null>(() => {
-    return getCachedBusinesses()?.find((b) => b.slug === slug || b.id === slug) || null;
-  });
+  // Hydration-safe initial state (identical between server SSR and client first pass)
+  const [business, setBusiness] = useState<Business | null>(null);
   const [reviews, setReviews] = useState<Review[]>([]);
-  const [isLoading, setIsLoading] = useState(() => {
-    return !(getCachedBusinesses()?.find((b) => b.slug === slug || b.id === slug));
-  });
+  const [isLoading, setIsLoading] = useState(true);
   const [leadFeedback, setLeadFeedback] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'overview' | 'photos' | 'reviews' | 'services' | 'offers' | 'map'>('overview');
   const [selectedPhotoIdx, setSelectedPhotoIdx] = useState(0);
@@ -97,6 +93,14 @@ export default function BusinessProfilePage({ params }: BusinessProfilePageProps
   const [replySubmitting, setReplySubmitting] = useState(false);
 
   useEffect(() => {
+    // 1. Immediately hydrate from memory/client cache if available (0ms instant display)
+    const cached = getCachedBusinesses()?.find((b) => b.slug === slug || b.id === slug);
+    if (cached) {
+      setBusiness(cached);
+      setIsLoading(false);
+    }
+
+    // 2. Fresh background fetch
     async function loadData() {
       try {
         const res = await fetch(`/api/businesses/${slug}`);
