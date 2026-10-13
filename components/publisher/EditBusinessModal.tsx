@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Business, Category, LocationHierarchy } from '@/types';
+import { ALL_INDIAN_STATES } from '@/lib/location/states';
 import { X, Save, Building2, MapPin, Phone, Globe, Clock, Sparkles, Image as ImageIcon, Plus, Trash2, Upload } from 'lucide-react';
 
 interface EditBusinessModalProps {
@@ -33,6 +34,7 @@ export const EditBusinessModal: React.FC<EditBusinessModalProps> = ({
   const [address, setAddress] = useState(business.address || '');
   const [locality, setLocality] = useState(business.locality || '');
   const [city, setCity] = useState(business.city || 'Indore');
+  const [state, setState] = useState(business.state || 'Madhya Pradesh');
   const [pincode, setPincode] = useState(business.pincode || '452010');
   const [phone, setPhone] = useState(business.phone || '');
   const [whatsapp, setWhatsapp] = useState(business.whatsapp || '');
@@ -125,6 +127,7 @@ export const EditBusinessModal: React.FC<EditBusinessModalProps> = ({
           address,
           locality,
           city,
+          state: state || undefined,
           pincode,
           phone,
           whatsapp,
@@ -363,18 +366,23 @@ export const EditBusinessModal: React.FC<EditBusinessModalProps> = ({
                 />
               </div>
 
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="block font-semibold text-neutral-700 mb-1">
-                    Locality / Area
+                    State / UT (India) *
                   </label>
-                  <input
-                    type="text"
-                    value={locality}
-                    onChange={(e) => setLocality(e.target.value)}
-                    placeholder="Vijay Nagar"
-                    className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none"
-                  />
+                  <select
+                    value={state}
+                    onChange={(e) => setState(e.target.value)}
+                    required
+                    className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none bg-white font-medium"
+                  >
+                    {ALL_INDIAN_STATES.map((s) => (
+                      <option key={s} value={s}>
+                        {s}
+                      </option>
+                    ))}
+                  </select>
                 </div>
 
                 <div>
@@ -386,7 +394,10 @@ export const EditBusinessModal: React.FC<EditBusinessModalProps> = ({
                     onChange={(e) => {
                       setLocationId(e.target.value);
                       const l = locations.find((loc) => loc.id === e.target.value);
-                      if (l) setCity(l.city);
+                      if (l) {
+                        setCity(l.city);
+                        if (l.state) setState(l.state);
+                      }
                     }}
                     className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none"
                   >
@@ -398,6 +409,19 @@ export const EditBusinessModal: React.FC<EditBusinessModalProps> = ({
                       </option>
                     ))}
                   </select>
+                </div>
+
+                <div>
+                  <label className="block font-semibold text-neutral-700 mb-1">
+                    Locality / Area
+                  </label>
+                  <input
+                    type="text"
+                    value={locality}
+                    onChange={(e) => setLocality(e.target.value)}
+                    placeholder="Vijay Nagar"
+                    className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none"
+                  />
                 </div>
 
                 <div>

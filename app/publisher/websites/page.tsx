@@ -7,6 +7,7 @@ import { Building2, Plus, CheckCircle2, Clock, Phone, MapPin, ExternalLink, Star
 import Link from 'next/link';
 import { EditBusinessModal } from '@/components/publisher/EditBusinessModal';
 import { DashboardCardSkeleton } from '@/components/business/BusinessCardSkeleton';
+import { ALL_INDIAN_STATES } from '@/lib/location/states';
 
 export default function BusinessManagementPage() {
   const { currentUser } = useAuth();
@@ -26,6 +27,7 @@ export default function BusinessManagementPage() {
   const [address, setAddress] = useState('');
   const [locality, setLocality] = useState('');
   const [city, setCity] = useState('');
+  const [state, setState] = useState('Madhya Pradesh');
   const [pincode, setPincode] = useState('452010');
   const [phone, setPhone] = useState(currentUser.phone || '');
   const [whatsapp, setWhatsapp] = useState(currentUser.phone || '');
@@ -88,7 +90,7 @@ export default function BusinessManagementPage() {
           address,
           locality,
           city: city || 'Indore',
-          state: 'Madhya Pradesh',
+          state: state || 'Madhya Pradesh',
           pincode,
           phone,
           whatsapp,
@@ -421,43 +423,55 @@ export default function BusinessManagementPage() {
                 />
               </div>
 
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label htmlFor="biz-loc" className="block font-semibold text-neutral-700 mb-1">
-                    Locality / Area
+                  <label htmlFor="biz-state" className="block font-semibold text-neutral-700 mb-1">
+                    State / UT (India) *
                   </label>
-                  <input
-                    id="biz-loc"
-                    type="text"
-                    value={locality}
-                    onChange={(e) => setLocality(e.target.value)}
-                    placeholder="Vijay Nagar"
+                  <select
+                    id="biz-state"
+                    value={state}
+                    onChange={(e) => setState(e.target.value)}
                     className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none"
-                  />
+                  >
+                    {ALL_INDIAN_STATES.map((s) => (
+                      <option key={s} value={s}>
+                        {s}
+                      </option>
+                    ))}
+                  </select>
                 </div>
 
                 <div>
                   <label htmlFor="biz-city" className="block font-semibold text-neutral-700 mb-1">
                     City *
                   </label>
-                  <select
+                  <input
                     id="biz-city"
-                    value={locationId}
-                    onChange={(e) => {
-                      setLocationId(e.target.value);
-                      const l = locations.find((loc) => loc.id === e.target.value);
-                      if (l) setCity(l.city);
-                    }}
+                    type="text"
+                    value={city}
+                    onChange={(e) => setCity(e.target.value)}
+                    placeholder="e.g. Indore, Bhopal, Mumbai..."
+                    required
                     className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none"
-                  >
-                    {locations.map((loc) => (
-                      <option key={loc.id} value={loc.id}>
-                        {loc.locality && loc.locality !== 'All Localities'
-                          ? `${loc.locality}, ${loc.city}`
-                          : loc.city} ({loc.state})
-                      </option>
-                    ))}
-                  </select>
+                  />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label htmlFor="biz-loc" className="block font-semibold text-neutral-700 mb-1">
+                    Locality / Area *
+                  </label>
+                  <input
+                    id="biz-loc"
+                    type="text"
+                    value={locality}
+                    onChange={(e) => setLocality(e.target.value)}
+                    placeholder="e.g. Vijay Nagar, Palasia..."
+                    required
+                    className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none"
+                  />
                 </div>
 
                 <div>
@@ -469,6 +483,7 @@ export default function BusinessManagementPage() {
                     type="text"
                     value={pincode}
                     onChange={(e) => setPincode(e.target.value)}
+                    placeholder="452010"
                     className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none font-mono"
                   />
                 </div>
