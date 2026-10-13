@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
 import { useAuth } from '@/lib/auth/context';
+import { InstallAppButton } from '@/components/pwa/InstallAppButton';
 import {
   SignInButton,
   SignUpButton,
@@ -287,26 +288,26 @@ export function Navbar() {
             : 'border-b border-neutral-100'
         }`}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-18 flex items-center justify-between">
           {/* Left: Brand Wordmark + Navigation Menus */}
-          <div className="flex items-center gap-7">
+          <div className="flex items-center gap-6 lg:gap-8 xl:gap-9">
             <Link href="/" className="flex items-center gap-2 group shrink-0 py-1">
               <img
                 src="/rankcity-logo.png"
                 alt="RankCity - Discover Local Businesses"
-                className="h-12 sm:h-14 w-auto object-contain transition-transform group-hover:scale-102"
+                className="h-9 sm:h-10 w-auto object-contain transition-transform group-hover:scale-102"
               />
             </Link>
 
             {/* Desktop Navigation Menus matching Reference UI */}
-            <nav className="hidden lg:flex items-center gap-1.5 text-xs font-medium text-neutral-600">
+            <nav className="hidden lg:flex items-center gap-2 xl:gap-3 text-[13px] font-medium text-neutral-600">
               {/* 1. Home Direct Link */}
               <Link
                 href="/"
                 className={`px-3 py-1.5 rounded-full transition-colors ${
                   pathname === '/'
-                    ? 'text-neutral-900 font-bold bg-neutral-100'
-                    : 'text-neutral-600 hover:text-neutral-950 hover:bg-neutral-50'
+                    ? 'text-neutral-900 font-semibold bg-neutral-100'
+                    : 'text-neutral-600 hover:text-neutral-900 hover:bg-neutral-50'
                 }`}
               >
                 Home
@@ -317,8 +318,8 @@ export function Navbar() {
                 href="/explore"
                 className={`px-3 py-1.5 rounded-full transition-colors ${
                   pathname.startsWith('/explore')
-                    ? 'text-neutral-900 font-bold bg-neutral-100'
-                    : 'text-neutral-600 hover:text-neutral-950 hover:bg-neutral-50'
+                    ? 'text-neutral-900 font-semibold bg-neutral-100'
+                    : 'text-neutral-600 hover:text-neutral-900 hover:bg-neutral-50'
                 }`}
               >
                 Explore
@@ -330,15 +331,15 @@ export function Navbar() {
                   type="button"
                   onClick={() => toggleMenu('categories')}
                   onMouseEnter={() => setActiveMenu('categories')}
-                  className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-full transition-all cursor-pointer ${
+                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full transition-all cursor-pointer ${
                     activeMenu === 'categories'
-                      ? 'text-neutral-950 font-bold bg-neutral-100'
-                      : 'text-neutral-600 hover:text-neutral-950 hover:bg-neutral-50'
+                      ? 'text-neutral-900 font-semibold bg-neutral-100'
+                      : 'text-neutral-600 hover:text-neutral-900 hover:bg-neutral-50'
                   }`}
                 >
                   <span>Categories</span>
                   <ChevronDown
-                    className={`w-3.5 h-3.5 text-neutral-400 transition-transform duration-200 ${
+                    className={`w-3 h-3 text-neutral-400 transition-transform duration-200 ${
                       activeMenu === 'categories' ? 'rotate-180 text-neutral-900' : ''
                     }`}
                   />
@@ -409,15 +410,15 @@ export function Navbar() {
                   type="button"
                   onClick={() => toggleMenu('cities')}
                   onMouseEnter={() => setActiveMenu('cities')}
-                  className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-full transition-all cursor-pointer ${
+                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full transition-all cursor-pointer ${
                     activeMenu === 'cities'
-                      ? 'text-neutral-950 font-bold bg-neutral-100'
-                      : 'text-neutral-600 hover:text-neutral-950 hover:bg-neutral-50'
+                      ? 'text-neutral-900 font-semibold bg-neutral-100'
+                      : 'text-neutral-600 hover:text-neutral-900 hover:bg-neutral-50'
                   }`}
                 >
                   <span>Cities</span>
                   <ChevronDown
-                    className={`w-3.5 h-3.5 text-neutral-400 transition-transform duration-200 ${
+                    className={`w-3 h-3 text-neutral-400 transition-transform duration-200 ${
                       activeMenu === 'cities' ? 'rotate-180 text-neutral-900' : ''
                     }`}
                   />
@@ -453,15 +454,15 @@ export function Navbar() {
                   type="button"
                   onClick={() => toggleMenu('business')}
                   onMouseEnter={() => setActiveMenu('business')}
-                  className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-full transition-all cursor-pointer ${
+                  className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full transition-all cursor-pointer ${
                     activeMenu === 'business'
-                      ? 'text-neutral-950 font-bold bg-neutral-100'
-                      : 'text-neutral-600 hover:text-neutral-950 hover:bg-neutral-50'
+                      ? 'text-neutral-900 font-semibold bg-neutral-100'
+                      : 'text-neutral-600 hover:text-neutral-900 hover:bg-neutral-50'
                   }`}
                 >
                   <span>For Business</span>
                   <ChevronDown
-                    className={`w-3.5 h-3.5 text-neutral-400 transition-transform duration-200 ${
+                    className={`w-3 h-3 text-neutral-400 transition-transform duration-200 ${
                       activeMenu === 'business' ? 'rotate-180 text-neutral-900' : ''
                     }`}
                   />
@@ -527,13 +528,13 @@ export function Navbar() {
           </div>
 
           {/* Right Action Center: City Selector + Dashboard + Add Business CTA + Clerk Auth */}
-          <div className="flex items-center gap-2 sm:gap-3">
+          <div className="flex items-center gap-2.5 sm:gap-3.5 lg:gap-4">
             {/* 1. Interactive City & Live Location Selector Pill */}
             <div className="relative">
               <button
                 type="button"
                 onClick={() => toggleMenu('citySelect')}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-neutral-800 bg-neutral-50 hover:bg-neutral-100 border border-neutral-200 rounded-full transition-all cursor-pointer shadow-2xs"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-neutral-700 bg-neutral-50 hover:bg-neutral-100 border border-neutral-200 rounded-full transition-all cursor-pointer shadow-2xs"
               >
                 {locSource === 'browser_gps' ? (
                   <Navigation2 className="w-3.5 h-3.5 text-emerald-600 fill-emerald-600 shrink-0 animate-pulse" />
@@ -606,16 +607,23 @@ export function Navbar() {
             <Show when="signed-in">
               <Link
                 href="/publisher"
-                className="hidden md:inline-flex items-center gap-1 px-3 py-1.5 text-xs font-semibold text-neutral-700 hover:text-neutral-900 border border-neutral-200 rounded-full hover:bg-neutral-50 transition-colors"
+                className="hidden md:inline-flex items-center gap-1 px-3 py-1.5 text-xs font-medium text-neutral-700 hover:text-neutral-900 border border-neutral-200 rounded-full hover:bg-neutral-50 transition-colors"
               >
                 <span>Dashboard</span>
               </Link>
             </Show>
 
+            {/* PWA Install Button */}
+            <InstallAppButton
+              variant="outline"
+              size="sm"
+              className="hidden lg:inline-flex rounded-full text-xs font-medium"
+            />
+
             {/* 3. Primary "Add Your Business" CTA (Hidden on small mobile to prevent header overflow) */}
             <Link
               href="/add-business"
-              className="hidden sm:inline-flex px-4 py-1.5 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-full shadow-sm hover:shadow transition-all whitespace-nowrap cursor-pointer items-center gap-1.5"
+              className="hidden sm:inline-flex px-3.5 py-1.5 text-xs font-semibold text-white bg-blue-600 hover:bg-blue-700 rounded-full shadow-xs hover:shadow transition-all whitespace-nowrap cursor-pointer items-center gap-1.5"
             >
               <span>Add Your Business</span>
             </Link>
@@ -625,7 +633,7 @@ export function Navbar() {
               <SignInButton mode="modal">
                 <button
                   type="button"
-                  className="hidden sm:inline-flex px-3.5 py-1.5 text-xs font-semibold text-neutral-800 hover:text-neutral-950 bg-neutral-100 hover:bg-neutral-200/80 rounded-full transition-colors cursor-pointer"
+                  className="hidden sm:inline-flex px-3 py-1.5 text-xs font-medium text-neutral-700 hover:text-neutral-950 bg-neutral-100/90 hover:bg-neutral-200/80 rounded-full transition-colors cursor-pointer"
                 >
                   Sign In
                 </button>
@@ -635,7 +643,7 @@ export function Navbar() {
               <div className="flex items-center gap-2 pl-0.5">
                 <Link
                   href="/profile"
-                  className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-neutral-700 hover:text-blue-600 bg-neutral-100 hover:bg-neutral-200/80 rounded-full transition-colors cursor-pointer"
+                  className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-neutral-700 hover:text-blue-600 bg-neutral-100/90 hover:bg-neutral-200/80 rounded-full transition-colors cursor-pointer"
                   title="Edit Profile"
                 >
                   <User className="w-3.5 h-3.5 text-neutral-500" />
@@ -649,7 +657,7 @@ export function Navbar() {
             <button
               type="button"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="lg:hidden p-2 text-neutral-600 hover:text-neutral-900 rounded-lg cursor-pointer"
+              className="lg:hidden p-1.5 text-neutral-600 hover:text-neutral-900 rounded-lg cursor-pointer"
               aria-label="Toggle Navigation"
             >
               {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
@@ -721,7 +729,7 @@ export function Navbar() {
               </Link>
 
               {/* Mobile Add Business CTA */}
-              <div className="pt-2">
+              <div className="pt-2 space-y-2">
                 <Link
                   href="/add-business"
                   onClick={() => setIsMobileMenuOpen(false)}
@@ -730,6 +738,11 @@ export function Navbar() {
                   <PlusCircle className="w-4 h-4" />
                   <span>Add Your Business (Free)</span>
                 </Link>
+                <InstallAppButton
+                  variant="outline"
+                  size="md"
+                  className="w-full justify-center bg-neutral-50 border-neutral-200"
+                />
               </div>
 
               {/* Mobile Auth Status */}

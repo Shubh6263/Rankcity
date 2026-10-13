@@ -20,7 +20,10 @@ const outfit = Outfit({
 });
 
 export const viewport: Viewport = {
-  themeColor: '#2563EB',
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#2563EB' },
+    { media: '(prefers-color-scheme: dark)', color: '#1E40AF' },
+  ],
   width: 'device-width',
   initialScale: 1,
   maximumScale: 5,
@@ -38,6 +41,28 @@ export const metadata: Metadata = {
   authors: [{ name: 'RankCity Team', url: APP_BASE_URL }],
   creator: 'RankCity',
   publisher: 'RankCity',
+  manifest: '/manifest.json',
+  icons: {
+    icon: [
+      { url: '/favicon.svg', type: 'image/svg+xml' },
+      { url: '/favicon.png', sizes: '48x48', type: 'image/png' },
+      { url: '/icons/icon-192x192.png', sizes: '192x192', type: 'image/png' },
+      { url: '/icons/icon-512x512.png', sizes: '512x512', type: 'image/png' },
+    ],
+    apple: [
+      { url: '/apple-touch-icon.png', sizes: '180x180', type: 'image/png' },
+      { url: '/icons/icon-180x180.png', sizes: '180x180', type: 'image/png' },
+    ],
+    shortcut: ['/favicon.png'],
+  },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'RankCity',
+  },
+  formatDetection: {
+    telephone: false,
+  },
   keywords: [
     'local business search',
     'best hotels in indore',
@@ -98,6 +123,7 @@ export const metadata: Metadata = {
 };
 
 import { LocationProvider } from '@/lib/location/context';
+import { PwaRoot } from '@/components/pwa/PwaRoot';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   const organizationSchema = generateOrganizationSchema();
@@ -106,6 +132,18 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={`h-full antialiased scroll-smooth ${plusJakarta.variable} ${outfit.variable}`}>
       <head>
+        {/* PWA & Mobile Meta Tags */}
+        <meta name="mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <meta name="apple-mobile-web-app-title" content="RankCity" />
+        <meta name="application-name" content="RankCity" />
+        <meta name="msapplication-TileColor" content="#2563EB" />
+        <meta name="msapplication-TileImage" content="/icons/icon-144x144.png" />
+        <meta name="msapplication-tap-highlight" content="no" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+        <link rel="manifest" href="/manifest.json" />
+
         {/* Schema.org Global Organization and WebSite JSON-LD */}
         <script
           type="application/ld+json"
@@ -119,7 +157,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body suppressHydrationWarning className="min-h-full flex flex-col font-sans bg-white text-neutral-900 selection:bg-blue-600 selection:text-white">
         <ClerkProvider>
           <AuthProvider>
-            <LocationProvider>{children}</LocationProvider>
+            <LocationProvider>
+              <PwaRoot>{children}</PwaRoot>
+            </LocationProvider>
           </AuthProvider>
         </ClerkProvider>
       </body>

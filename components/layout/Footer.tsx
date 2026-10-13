@@ -1,5 +1,6 @@
 import React from 'react';
 import Link from 'next/link';
+import { InstallAppButton } from '@/components/pwa/InstallAppButton';
 
 export function Footer() {
   return (
@@ -20,6 +21,15 @@ export function Footer() {
             <div className="mt-4 p-3 rounded-xl bg-neutral-800/80 border border-neutral-700/60 text-[11px] leading-relaxed text-neutral-300">
               <strong className="text-amber-400 block mb-0.5">Sponsored Rankings Transparency:</strong>
               Sponsored placements displayed on RankCity are verified merchant positions competing through second-price auctions. Transparent disclosures ensure consumers always distinguish sponsored and organic recommendations.
+            </div>
+
+            <div className="mt-4 flex items-center gap-3">
+              <InstallAppButton
+                variant="outline"
+                size="sm"
+                className="bg-neutral-800 text-neutral-200 border-neutral-700 hover:bg-neutral-700 hover:text-white"
+              />
+              <span className="text-[11px] text-neutral-400">Available as a PWA on iOS, Android & Desktop</span>
             </div>
           </div>
 

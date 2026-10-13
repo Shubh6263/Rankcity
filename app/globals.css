@@ -8,7 +8,6 @@
 @layer base {
   html {
     font-family: var(--font-sans);
-    font-size: 17px; /* Scaled up from standard 16px to make entire website comfortable and easily readable */
     letter-spacing: -0.011em;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
@@ -25,22 +24,6 @@
     font-family: var(--font-display);
     letter-spacing: -0.025em;
     font-weight: 700;
-  }
-
-  /* Make micro text (text-[10px], text-[11px], text-xs) comfortably readable */
-  .text-\[10px\] {
-    font-size: 0.75rem !important; /* ~12.5px */
-    line-height: 1.1rem !important;
-  }
-
-  .text-\[11px\] {
-    font-size: 0.8125rem !important; /* ~13.5px */
-    line-height: 1.2rem !important;
-  }
-
-  .text-xs {
-    font-size: 0.875rem !important; /* ~14.8px */
-    line-height: 1.35rem !important;
   }
 }
 

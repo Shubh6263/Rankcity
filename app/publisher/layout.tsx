@@ -46,13 +46,13 @@ export default function PublisherLayout({ children }: { children: React.ReactNod
       <RoleSwitcherBar />
 
       {/* Dashboard Top Header */}
-      <header className="sticky top-0 z-50 bg-white border-b border-neutral-200 h-18 sm:h-20">
+      <header className="sticky top-0 z-50 bg-white border-b border-neutral-200 h-16 sm:h-18">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center justify-between">
           <Link href="/" className="flex items-center gap-2 group py-1">
             <img
               src="/rankcity-logo.png"
               alt="RankCity - Discover Local Businesses"
-              className="h-11 sm:h-13 w-auto object-contain transition-transform group-hover:scale-102"
+              className="h-9 sm:h-10 w-auto object-contain transition-transform group-hover:scale-102"
             />
           </Link>
 
