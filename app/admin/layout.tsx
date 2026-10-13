@@ -31,6 +31,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     { label: 'Review Moderation', href: '/admin/reviews', icon: MessageSquare },
     { label: 'Live Auctions', href: '/admin/auctions', icon: TrendingUp },
     { label: 'Business Directory', href: '/admin/websites', icon: Globe },
+    { label: 'Location Database', href: '/admin/locations', icon: MapPin },
     { label: 'Users & RBAC', href: '/admin/users', icon: Users },
     { label: 'Payments & Ledger', href: '/admin/payments', icon: CreditCard },
     { label: 'Audit Logs', href: '/admin/audit', icon: History },

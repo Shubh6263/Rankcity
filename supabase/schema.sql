@@ -184,3 +184,170 @@ CREATE POLICY "Service Role All Wallets" ON public.wallets FOR ALL USING (true);
 CREATE POLICY "Service Role All Transactions" ON public.wallet_transactions FOR ALL USING (true);
 CREATE POLICY "Service Role All Reviews" ON public.reviews FOR ALL USING (true);
 CREATE POLICY "Service Role All Enquiries" ON public.enquiries FOR ALL USING (true);
+
+-- =========================================================================
+-- 9. COMPLETE INDIA LOCATION HIERARCHY TABLES
+-- =========================================================================
+
+-- STATES (All 28 States & 8 Union Territories)
+CREATE TABLE IF NOT EXISTS public.states (
+  id TEXT PRIMARY KEY,
+  name TEXT NOT NULL,
+  name_hi TEXT,
+  code TEXT NOT NULL UNIQUE,
+  lgd_code INTEGER UNIQUE,
+  type TEXT NOT NULL DEFAULT 'STATE' CHECK (type IN ('STATE', 'UT')),
+  capital TEXT,
+  is_active BOOLEAN NOT NULL DEFAULT true,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+-- DISTRICTS (750+ Districts)
+CREATE TABLE IF NOT EXISTS public.districts (
+  id TEXT PRIMARY KEY,
+  state_id TEXT NOT NULL REFERENCES public.states(id) ON DELETE RESTRICT,
+  name TEXT NOT NULL,
+  name_hi TEXT,
+  lgd_code INTEGER UNIQUE,
+  headquarter TEXT,
+  is_active BOOLEAN NOT NULL DEFAULT true,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  CONSTRAINT uq_district_state_name UNIQUE (state_id, name)
+);
+
+-- CITIES & URBAN LOCAL BODIES
+CREATE TABLE IF NOT EXISTS public.cities (
+  id TEXT PRIMARY KEY,
+  district_id TEXT NOT NULL REFERENCES public.districts(id) ON DELETE RESTRICT,
+  name TEXT NOT NULL,
+  name_hi TEXT,
+  city_type TEXT NOT NULL DEFAULT 'City',
+  lgd_code INTEGER UNIQUE,
+  latitude DOUBLE PRECISION,
+  longitude DOUBLE PRECISION,
+  is_active BOOLEAN NOT NULL DEFAULT true,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  CONSTRAINT uq_city_district_name UNIQUE (district_id, name)
+);
+
+-- VILLAGES
+CREATE TABLE IF NOT EXISTS public.villages (
+  id TEXT PRIMARY KEY,
+  district_id TEXT NOT NULL REFERENCES public.districts(id) ON DELETE RESTRICT,
+  subdistrict_id TEXT,
+  name TEXT NOT NULL,
+  name_hi TEXT,
+  lgd_code INTEGER,
+  pincode TEXT,
+  is_active BOOLEAN NOT NULL DEFAULT true,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+-- LOCALITIES
+CREATE TABLE IF NOT EXISTS public.localities (
+  id TEXT PRIMARY KEY,
+  city_id TEXT NOT NULL REFERENCES public.cities(id) ON DELETE RESTRICT,
+  name TEXT NOT NULL,
+  pincode TEXT,
+  latitude DOUBLE PRECISION,
+  longitude DOUBLE PRECISION,
+  is_active BOOLEAN NOT NULL DEFAULT true,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  CONSTRAINT uq_locality_city_name UNIQUE (city_id, name)
+);
+
+-- PINCODES & POST OFFICES
+CREATE TABLE IF NOT EXISTS public.pincodes (
+  id TEXT PRIMARY KEY,
+  pincode TEXT NOT NULL,
+  post_office_name TEXT NOT NULL,
+  district_id TEXT REFERENCES public.districts(id) ON DELETE RESTRICT,
+  state_id TEXT REFERENCES public.states(id) ON DELETE RESTRICT,
+  circle TEXT,
+  region TEXT,
+  division TEXT,
+  office_type TEXT,
+  delivery_status TEXT DEFAULT 'Delivery',
+  is_active BOOLEAN NOT NULL DEFAULT true,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+-- LOCATION IMPORT LOGS
+CREATE TABLE IF NOT EXISTS public.location_import_logs (
+  id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
+  source TEXT NOT NULL,
+  file_name TEXT,
+  import_date TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  records_added INTEGER NOT NULL DEFAULT 0,
+  records_updated INTEGER NOT NULL DEFAULT 0,
+  records_rejected INTEGER NOT NULL DEFAULT 0,
+  status TEXT NOT NULL DEFAULT 'completed',
+  is_dry_run BOOLEAN NOT NULL DEFAULT false,
+  error_details JSONB DEFAULT '[]'::jsonb,
+  triggered_by TEXT,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+-- USER LOCATION SUGGESTIONS
+CREATE TABLE IF NOT EXISTS public.location_suggestions (
+  id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
+  location_type TEXT NOT NULL DEFAULT 'city' CHECK (location_type IN ('state', 'district', 'city', 'town', 'village', 'locality', 'pincode')),
+  name TEXT NOT NULL,
+  state_name TEXT NOT NULL,
+  district_name TEXT,
+  city_name TEXT,
+  pincode TEXT,
+  submitted_by_user_id TEXT,
+  contact_email TEXT,
+  notes TEXT,
+  status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'approved', 'rejected')),
+  admin_notes TEXT,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+-- Indexes
+CREATE INDEX IF NOT EXISTS idx_states_code ON public.states(code);
+CREATE INDEX IF NOT EXISTS idx_states_lgd ON public.states(lgd_code);
+CREATE INDEX IF NOT EXISTS idx_districts_state ON public.districts(state_id);
+CREATE INDEX IF NOT EXISTS idx_cities_district ON public.cities(district_id);
+CREATE INDEX IF NOT EXISTS idx_cities_name ON public.cities(name);
+CREATE INDEX IF NOT EXISTS idx_localities_city ON public.localities(city_id);
+CREATE INDEX IF NOT EXISTS idx_pincodes_pincode ON public.pincodes(pincode);
+CREATE INDEX IF NOT EXISTS idx_pincodes_district ON public.pincodes(district_id);
+CREATE INDEX IF NOT EXISTS idx_suggestions_status ON public.location_suggestions(status);
+
+-- Enable RLS & Policies
+ALTER TABLE public.states ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.districts ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.cities ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.villages ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.localities ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.pincodes ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.location_import_logs ENABLE ROW LEVEL SECURITY;
+ALTER TABLE public.location_suggestions ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Public Read Active States" ON public.states FOR SELECT USING (is_active = true);
+CREATE POLICY "Public Read Active Districts" ON public.districts FOR SELECT USING (is_active = true);
+CREATE POLICY "Public Read Active Cities" ON public.cities FOR SELECT USING (is_active = true);
+CREATE POLICY "Public Read Active Villages" ON public.villages FOR SELECT USING (is_active = true);
+CREATE POLICY "Public Read Active Localities" ON public.localities FOR SELECT USING (is_active = true);
+CREATE POLICY "Public Read Active Pincodes" ON public.pincodes FOR SELECT USING (is_active = true);
+CREATE POLICY "Public Submit Location Suggestion" ON public.location_suggestions FOR INSERT WITH CHECK (true);
+CREATE POLICY "Public Read Own Suggestions" ON public.location_suggestions FOR SELECT USING (true);
+
+CREATE POLICY "Service Role All States" ON public.states FOR ALL USING (true);
+CREATE POLICY "Service Role All Districts" ON public.districts FOR ALL USING (true);
+CREATE POLICY "Service Role All Cities" ON public.cities FOR ALL USING (true);
+CREATE POLICY "Service Role All Villages" ON public.villages FOR ALL USING (true);
+CREATE POLICY "Service Role All Localities" ON public.localities FOR ALL USING (true);
+CREATE POLICY "Service Role All Pincodes" ON public.pincodes FOR ALL USING (true);
+CREATE POLICY "Service Role All Import Logs" ON public.location_import_logs FOR ALL USING (true);
+CREATE POLICY "Service Role All Suggestions" ON public.location_suggestions FOR ALL USING (true);
+

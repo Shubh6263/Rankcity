@@ -33,6 +33,7 @@ import {
 } from 'lucide-react';
 
 import { ALL_INDIAN_STATES } from '@/lib/location/states';
+import { HierarchicalLocationSelector } from '@/components/location/HierarchicalLocationSelector';
 
 const BUSINESS_TYPES = [
   'Retail Store',
@@ -163,8 +164,14 @@ export default function AddBusinessPage() {
 
     // Step 2: Location (RankCity Core Data)
     country: 'India',
+    stateId: 'st_23',
     state: 'Madhya Pradesh',
+    districtId: '',
+    districtName: '',
+    cityId: '',
     city: '',
+    villageId: '',
+    villageName: '',
     locality: '',
     address: '', // Full physical address
     pincode: '',
@@ -306,6 +313,10 @@ export default function AddBusinessPage() {
         yearEstablished: Number(formData.yearEstablished) || undefined,
         categoryId: formData.categoryId,
         subcategoryId: formData.subcategoryId || undefined,
+        locationId: formData.cityId || formData.districtId || undefined,
+        stateId: formData.stateId || undefined,
+        districtId: formData.districtId || undefined,
+        cityId: formData.cityId || undefined,
         city: formData.city,
         locality: formData.locality,
         address: formData.address || `${formData.locality}, ${formData.city}`,
@@ -678,145 +689,48 @@ export default function AddBusinessPage() {
                   Location & Map Coordinates
                 </h2>
                 <p className="text-xs sm:text-sm text-neutral-600 mt-1">
-                  Full physical address, landmark, PIN code, and Google Maps directions link for customer routing.
+                  Select your exact state, district, city/village and locality from the India-wide location hierarchy.
                 </p>
               </div>
 
-              <div className="space-y-4">
-                {/* Full Physical Address */}
-                <div>
-                  <label className="block text-xs font-bold text-neutral-700 mb-1.5">
-                    Full Physical Address *
-                  </label>
-                  <input
-                    type="text"
-                    name="address"
-                    required
-                    placeholder="e.g. 123, Ring Road, Scheme 54, Near Velocity Mirage"
-                    value={formData.address}
-                    onChange={handleChange}
-                    className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl text-sm font-semibold text-neutral-900 focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-blue-600"
-                  />
-                </div>
-
-                {/* State, City & Area */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  <div>
-                    <label className="block text-xs font-bold text-neutral-700 mb-1.5">
-                      State / UT (India) *
-                    </label>
-                    <select
-                      name="state"
-                      value={formData.state}
-                      onChange={handleChange}
-                      required
-                      className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl text-sm font-semibold text-neutral-800 focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-blue-600"
-                    >
-                      <option value="" disabled>Select State / UT *</option>
-                      {ALL_INDIAN_STATES.map((s) => (
-                        <option key={s} value={s}>
-                          {s}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-bold text-neutral-700 mb-1.5">
-                      City *
-                    </label>
-                    <input
-                      type="text"
-                      name="city"
-                      required
-                      placeholder="e.g. Indore, Bhopal, Mumbai..."
-                      value={formData.city}
-                      onChange={handleChange}
-                      className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl text-sm font-semibold text-neutral-900 focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-blue-600"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-bold text-neutral-700 mb-1.5">
-                      Area / Locality *
-                    </label>
-                    <input
-                      type="text"
-                      name="locality"
-                      required
-                      placeholder="e.g. Vijay Nagar, Palasia, Kolar Road..."
-                      value={formData.locality}
-                      onChange={handleChange}
-                      className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl text-sm font-semibold text-neutral-900 focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-blue-600"
-                    />
-                  </div>
-                </div>
-
-                {/* PIN Code & Country */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-xs font-bold text-neutral-700 mb-1.5">
-                      PIN Code *
-                    </label>
-                    <input
-                      type="text"
-                      name="pincode"
-                      value={formData.pincode}
-                      onChange={handleChange}
-                      placeholder="452010"
-                      className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl text-sm font-mono font-bold text-neutral-900 focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-blue-600"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-bold text-neutral-700 mb-1.5">
-                      Country *
-                    </label>
-                    <select
-                      name="country"
-                      value={formData.country}
-                      onChange={handleChange}
-                      className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl text-sm font-semibold text-neutral-800 focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-blue-600"
-                    >
-                      {ALL_COUNTRIES.map((c) => (
-                        <option key={c} value={c}>
-                          {c}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-
-                {/* Landmark & Building Info */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-xs font-bold text-neutral-700 mb-1.5">
-                      Landmark (Optional)
-                    </label>
-                    <input
-                      type="text"
-                      name="landmark"
-                      placeholder="e.g. Near C21 Mall / Opp Orbit Mall"
-                      value={formData.landmark}
-                      onChange={handleChange}
-                      className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl text-sm font-medium text-neutral-900 focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-blue-600"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-bold text-neutral-700 mb-1.5">
-                      Building / Floor / Shop No. (Optional)
-                    </label>
-                    <input
-                      type="text"
-                      name="buildingInfo"
-                      placeholder="e.g. 2nd Floor, Crystal IT Park"
-                      value={formData.buildingInfo}
-                      onChange={handleChange}
-                      className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl text-sm font-medium text-neutral-900 focus:bg-white focus:outline-hidden focus:ring-2 focus:ring-blue-600"
-                    />
-                  </div>
-                </div>
+              {/* Comprehensive Hierarchical Location Selector */}
+              <HierarchicalLocationSelector
+                value={{
+                  country: formData.country,
+                  stateId: formData.stateId,
+                  stateName: formData.state,
+                  districtId: formData.districtId,
+                  districtName: formData.districtName,
+                  cityId: formData.cityId,
+                  cityName: formData.city,
+                  villageId: formData.villageId,
+                  villageName: formData.villageName,
+                  locality: formData.locality,
+                  pincode: formData.pincode,
+                  address: formData.address,
+                  landmark: formData.landmark,
+                  buildingInfo: formData.buildingInfo,
+                }}
+                onChange={(loc) => {
+                  setFormData((prev) => ({
+                    ...prev,
+                    country: loc.country,
+                    stateId: loc.stateId,
+                    state: loc.stateName,
+                    districtId: loc.districtId,
+                    districtName: loc.districtName,
+                    cityId: loc.cityId,
+                    city: loc.cityName,
+                    villageId: loc.villageId || '',
+                    villageName: loc.villageName || '',
+                    locality: loc.locality,
+                    pincode: loc.pincode,
+                    address: loc.address,
+                    landmark: loc.landmark || '',
+                    buildingInfo: loc.buildingInfo || '',
+                  }));
+                }}
+              />
 
                 {/* Google Maps Directions Link */}
                 <div className="bg-blue-50/50 border border-blue-100 rounded-2xl p-4 space-y-2">
@@ -850,7 +764,6 @@ export default function AddBusinessPage() {
                     When customers click <strong>[📍 Directions]</strong> on your card or profile, they will navigate directly to this coordinate.
                   </p>
                 </div>
-              </div>
             </div>
           )}
 

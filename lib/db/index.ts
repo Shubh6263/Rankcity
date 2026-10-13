@@ -43,6 +43,7 @@ import {
   PaymentRequest,
 } from '@/types';
 import { supabaseAdmin } from '@/lib/supabase/client';
+import { locationDb } from '@/lib/location/service';
 
 class DatabaseStore {
   users: User[] = [...initialUsers];
@@ -300,23 +301,109 @@ class DatabaseStore {
   }
 
   getLocationBySlug(slug: string): LocationHierarchy | undefined {
-    return this.locations.find((l) => l.slug === slug);
+    const existing = this.locations.find((l) => l.slug === slug || l.city.toLowerCase() === slug.toLowerCase());
+    if (existing) return existing;
+
+    const found = locationDb.getCities({ search: slug, limit: 1 }).items[0];
+    if (found) {
+      const d = locationDb.getDistrictById(found.districtId);
+      const s = d ? locationDb.getStateById(d.stateId) : undefined;
+      return {
+        id: found.id,
+        name: found.name,
+        city: found.name,
+        state: s?.name || 'Madhya Pradesh',
+        stateId: s?.id,
+        country: 'India',
+        district: d?.name,
+        districtId: d?.id,
+        slug: found.name.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+        latitude: found.latitude,
+        longitude: found.longitude,
+      };
+    }
+    return undefined;
   }
 
   getLocationById(id: string): LocationHierarchy | undefined {
-    return this.locations.find((l) => l.id === id);
+    const existing = this.locations.find((l) => l.id === id);
+    if (existing) return existing;
+
+    const city = locationDb.getCityById(id);
+    if (city) {
+      const d = locationDb.getDistrictById(city.districtId);
+      const s = d ? locationDb.getStateById(d.stateId) : undefined;
+      return {
+        id: city.id,
+        name: city.name,
+        city: city.name,
+        state: s?.name || 'Madhya Pradesh',
+        stateId: s?.id,
+        country: 'India',
+        district: d?.name,
+        districtId: d?.id,
+        slug: city.name.toLowerCase().replace(/[^a-z0-9]+/g, '-'),
+        latitude: city.latitude,
+        longitude: city.longitude,
+      };
+    }
+    return undefined;
   }
 
   // --- Businesses ---
-  getBusinesses(ownerId?: string): Business[] {
-    if (ownerId) {
-      return this.businesses.filter((b) => b.ownerId === ownerId);
+  getBusinesses(
+    filter?:
+      | string
+      | {
+          ownerId?: string;
+          locationId?: string;
+          cityId?: string;
+          districtId?: string;
+          stateId?: string;
+          city?: string;
+          pincode?: string;
+          search?: string;
+        }
+  ): Business[] {
+    if (!filter) return this.businesses;
+    if (typeof filter === 'string') {
+      return this.businesses.filter((b) => b.ownerId === filter);
     }
-    return this.businesses;
+
+    return this.businesses.filter((b) => {
+      if (filter.ownerId && b.ownerId !== filter.ownerId) return false;
+      if (filter.locationId && b.locationId !== filter.locationId && b.cityId !== filter.locationId) return false;
+      if (filter.cityId && b.cityId !== filter.cityId && b.locationId !== filter.cityId) return false;
+      if (filter.districtId && b.districtId !== filter.districtId) return false;
+      if (filter.stateId && b.stateId !== filter.stateId) return false;
+      if (filter.city && b.city.toLowerCase() !== filter.city.toLowerCase()) return false;
+      if (filter.pincode && b.pincode !== filter.pincode) return false;
+      if (filter.search) {
+        const q = filter.search.toLowerCase();
+        const matchName = b.name.toLowerCase().includes(q);
+        const matchCity = b.city.toLowerCase().includes(q);
+        const matchAddr = b.address.toLowerCase().includes(q);
+        if (!matchName && !matchCity && !matchAddr) return false;
+      }
+      return true;
+    });
   }
 
-  getWebsites(ownerId?: string): Business[] {
-    return this.getBusinesses(ownerId);
+  getWebsites(
+    filter?:
+      | string
+      | {
+          ownerId?: string;
+          locationId?: string;
+          cityId?: string;
+          districtId?: string;
+          stateId?: string;
+          city?: string;
+          pincode?: string;
+          search?: string;
+        }
+  ): Business[] {
+    return this.getBusinesses(filter);
   }
 
   getBusinessById(id: string): Business | undefined {
@@ -350,6 +437,11 @@ class DatabaseStore {
     categoryId: string;
     subcategoryId?: string;
     locationId?: string;
+    stateId?: string;
+    districtId?: string;
+    cityId?: string;
+    localityId?: string;
+    pincodeId?: string;
     address: string;
     locality?: string;
     city?: string;
@@ -431,7 +523,12 @@ class DatabaseStore {
       yearEstablished: data.yearEstablished,
       categoryId: data.categoryId,
       subcategoryId: data.subcategoryId,
-      locationId: data.locationId || loc.id,
+      locationId: data.locationId || data.cityId || loc.id,
+      stateId: data.stateId,
+      districtId: data.districtId,
+      cityId: data.cityId,
+      localityId: data.localityId,
+      pincodeId: data.pincodeId,
       address: data.address,
       locality: data.locality || loc.locality || 'City Center',
       city: data.city || loc.city,
@@ -496,6 +593,9 @@ class DatabaseStore {
       description: newBusiness.description,
       category_id: newBusiness.categoryId,
       location_id: newBusiness.locationId,
+      state_id: newBusiness.stateId,
+      district_id: newBusiness.districtId,
+      city_id: newBusiness.cityId,
       address: newBusiness.address,
       locality: newBusiness.locality,
       city: newBusiness.city,
@@ -763,7 +863,13 @@ class DatabaseStore {
     const topRatedBusinesses = this.businesses
       .filter((b) => {
         const catMatch = b.categoryId === category.id;
-        const locMatch = location ? b.locationId === location.id : true;
+        const locMatch = location
+          ? b.locationId === location.id ||
+            b.cityId === location.id ||
+            (b.city.toLowerCase() === location.city.toLowerCase() &&
+              (!location.district || !b.districtId || b.districtId === location.districtId) &&
+              (!location.state || b.state.toLowerCase() === location.state.toLowerCase()))
+          : true;
         return catMatch && locMatch && b.status === 'approved';
       })
       .sort((a, b) => b.rating * b.reviewCount - a.rating * a.reviewCount)

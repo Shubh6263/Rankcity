@@ -43,13 +43,132 @@ export interface Subcategory {
 
 export interface LocationHierarchy {
   id: string;
+  name?: string;
   country: string;
   state: string;
+  stateId?: string;
+  district?: string;
+  districtId?: string;
   city: string;
   locality?: string;
   slug: string;
   latitude?: number;
   longitude?: number;
+}
+
+export type LocationLevelType = 'country' | 'state' | 'district' | 'city' | 'town' | 'village' | 'locality' | 'pincode';
+
+export interface StateRecord {
+  id: string;
+  name: string;
+  nameHi?: string;
+  code: string; // ISO 3166-2:IN code e.g. MP, MH, DL
+  lgdCode?: number;
+  type: 'STATE' | 'UT';
+  capital?: string;
+  isActive: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface DistrictRecord {
+  id: string;
+  stateId: string;
+  stateLgdCode?: number;
+  name: string;
+  nameHi?: string;
+  lgdCode?: number;
+  headquarter?: string;
+  isActive: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface CityRecord {
+  id: string;
+  districtId: string;
+  name: string;
+  nameHi?: string;
+  cityType: string; // 'Municipal Corporation' | 'Municipality' | 'Town' | 'Cantonment Board' | etc.
+  lgdCode?: number;
+  latitude?: number;
+  longitude?: number;
+  isActive: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface VillageRecord {
+  id: string;
+  districtId: string;
+  subdistrictId?: string;
+  name: string;
+  nameHi?: string;
+  lgdCode?: number;
+  pincode?: string;
+  isActive: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface LocalityRecord {
+  id: string;
+  cityId: string;
+  name: string;
+  pincode?: string;
+  latitude?: number;
+  longitude?: number;
+  isActive: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface PincodeRecord {
+  id: string;
+  pincode: string;
+  postOfficeName: string;
+  districtId?: string;
+  stateId?: string;
+  circle?: string;
+  region?: string;
+  division?: string;
+  officeType?: string;
+  deliveryStatus?: string;
+  isActive: boolean;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface LocationImportLog {
+  id: string;
+  source: string;
+  fileName?: string;
+  importDate: string;
+  recordsAdded: number;
+  recordsUpdated: number;
+  recordsRejected: number;
+  status: 'completed' | 'failed' | 'dry_run';
+  isDryRun: boolean;
+  errorDetails?: Array<{ row?: number; field?: string; message: string; data?: any }>;
+  triggeredBy?: string;
+  createdAt?: string;
+}
+
+export interface LocationSuggestion {
+  id: string;
+  locationType: LocationLevelType;
+  name: string;
+  stateName: string;
+  districtName?: string;
+  cityName?: string;
+  pincode?: string;
+  submittedByUserId?: string;
+  contactEmail?: string;
+  notes?: string;
+  status: 'pending' | 'approved' | 'rejected';
+  adminNotes?: string;
+  createdAt: string;
+  updatedAt?: string;
 }
 
 export interface Business {
@@ -61,7 +180,13 @@ export interface Business {
   categoryId: string;
   subcategoryId?: string;
   locationId: string;
+  stateId?: string;
+  districtId?: string;
+  cityId?: string;
+  localityId?: string;
+  pincodeId?: string;
   address: string;
+
   locality?: string;
   city: string;
   state: string;

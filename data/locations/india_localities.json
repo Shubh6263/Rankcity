@@ -1,0 +1,47 @@
+[
+  {"id": "loc_indore_vijay_nagar", "cityId": "cty_indore", "name": "Vijay Nagar", "pincode": "452010", "latitude": 22.7533, "longitude": 75.8937, "isActive": true},
+  {"id": "loc_indore_palasia", "cityId": "cty_indore", "name": "Palasia", "pincode": "452018", "latitude": 22.7244, "longitude": 75.8839, "isActive": true},
+  {"id": "loc_indore_rajwada", "cityId": "cty_indore", "name": "Rajwada", "pincode": "452002", "latitude": 22.7180, "longitude": 75.8560, "isActive": true},
+  {"id": "loc_indore_geeta_bhawan", "cityId": "cty_indore", "name": "Geeta Bhawan", "pincode": "452001", "latitude": 22.7220, "longitude": 75.8810, "isActive": true},
+  {"id": "loc_indore_bhawar_kuan", "cityId": "cty_indore", "name": "Bhawarkua", "pincode": "452001", "latitude": 22.6931, "longitude": 75.8661, "isActive": true},
+  {"id": "loc_indore_sapna_sangeeta", "cityId": "cty_indore", "name": "Sapna Sangeeta", "pincode": "452001", "latitude": 22.7050, "longitude": 75.8670, "isActive": true},
+  {"id": "loc_indore_ab_road", "cityId": "cty_indore", "name": "AB Road / Scheme 54", "pincode": "452010", "latitude": 22.7400, "longitude": 75.8900, "isActive": true},
+
+  {"id": "loc_bhopal_mp_nagar", "cityId": "cty_bhopal", "name": "MP Nagar (Zone 1 & 2)", "pincode": "462011", "latitude": 23.2332, "longitude": 77.4343, "isActive": true},
+  {"id": "loc_bhopal_arera_colony", "cityId": "cty_bhopal", "name": "Arera Colony", "pincode": "462016", "latitude": 23.2135, "longitude": 77.4334, "isActive": true},
+  {"id": "loc_bhopal_new_market", "cityId": "cty_bhopal", "name": "New Market", "pincode": "462003", "latitude": 23.2325, "longitude": 77.4026, "isActive": true},
+
+  {"id": "loc_ujjain_mahakal", "cityId": "cty_ujjain", "name": "Mahakal Corridor", "pincode": "456010", "latitude": 23.1827, "longitude": 75.7682, "isActive": true},
+  {"id": "loc_ujjain_freeganj", "cityId": "cty_ujjain", "name": "Freeganj", "pincode": "456001", "latitude": 23.1729, "longitude": 75.7924, "isActive": true},
+  {"id": "loc_ujjain_nanakheda", "cityId": "cty_ujjain", "name": "Nanakheda", "pincode": "456010", "latitude": 23.1539, "longitude": 75.7877, "isActive": true},
+
+  {"id": "loc_mumbai_bandra_west", "cityId": "cty_mumbai_suburban", "name": "Bandra West", "pincode": "400050", "latitude": 19.0596, "longitude": 72.8295, "isActive": true},
+  {"id": "loc_mumbai_bkc", "cityId": "cty_mumbai_suburban", "name": "Bandra Kurla Complex (BKC)", "pincode": "400051", "latitude": 19.0688, "longitude": 72.8698, "isActive": true},
+  {"id": "loc_mumbai_andheri_east", "cityId": "cty_mumbai_suburban", "name": "Andheri East", "pincode": "400069", "latitude": 19.1136, "longitude": 72.8697, "isActive": true},
+  {"id": "loc_mumbai_fort", "cityId": "cty_mumbai", "name": "Fort / Colaba", "pincode": "400001", "latitude": 18.9322, "longitude": 72.8336, "isActive": true},
+
+  {"id": "loc_pune_koregaon_park", "cityId": "cty_pune", "name": "Koregaon Park", "pincode": "411001", "latitude": 18.5362, "longitude": 73.8940, "isActive": true},
+  {"id": "loc_pune_hinjewadi", "cityId": "cty_pune", "name": "Hinjewadi IT Park", "pincode": "411057", "latitude": 18.5913, "longitude": 73.7389, "isActive": true},
+  {"id": "loc_pune_baner", "cityId": "cty_pune", "name": "Baner", "pincode": "411045", "latitude": 18.5590, "longitude": 73.7868, "isActive": true},
+
+  {"id": "loc_blr_indiranagar", "cityId": "cty_bengaluru", "name": "Indiranagar", "pincode": "560038", "latitude": 12.9784, "longitude": 77.6408, "isActive": true},
+  {"id": "loc_blr_koramangala", "cityId": "cty_bengaluru", "name": "Koramangala", "pincode": "560034", "latitude": 12.9352, "longitude": 77.6245, "isActive": true},
+  {"id": "loc_blr_whitefield", "cityId": "cty_bengaluru", "name": "Whitefield", "pincode": "560066", "latitude": 12.9698, "longitude": 77.7500, "isActive": true},
+  {"id": "loc_blr_hsr_layout", "cityId": "cty_bengaluru", "name": "HSR Layout", "pincode": "560102", "latitude": 12.9121, "longitude": 77.6446, "isActive": true},
+
+  {"id": "loc_del_connaught_place", "cityId": "cty_new_delhi", "name": "Connaught Place", "pincode": "110001", "latitude": 28.6315, "longitude": 77.2167, "isActive": true},
+  {"id": "loc_del_saket", "cityId": "cty_south_delhi", "name": "Saket / Malviya Nagar", "pincode": "110017", "latitude": 28.5244, "longitude": 77.2066, "isActive": true},
+  {"id": "loc_del_aerocity", "cityId": "cty_south_delhi", "name": "Aerocity", "pincode": "110037", "latitude": 28.5494, "longitude": 77.1211, "isActive": true},
+
+  {"id": "loc_gur_cyber_hub", "cityId": "cty_gurugram", "name": "DLF Cyber City / Cyber Hub", "pincode": "122002", "latitude": 28.4952, "longitude": 77.0890, "isActive": true},
+  {"id": "loc_gur_golf_course_rd", "cityId": "cty_gurugram", "name": "Golf Course Road", "pincode": "122002", "latitude": 28.4552, "longitude": 77.1042, "isActive": true},
+  {"id": "loc_gur_sector_29", "cityId": "cty_gurugram", "name": "Sector 29", "pincode": "122001", "latitude": 28.4682, "longitude": 77.0628, "isActive": true},
+
+  {"id": "loc_noi_sector_18", "cityId": "cty_noida", "name": "Sector 18 (Atta Market)", "pincode": "201301", "latitude": 28.5708, "longitude": 77.3271, "isActive": true},
+  {"id": "loc_noi_sector_62", "cityId": "cty_noida", "name": "Sector 62 (IT Hub)", "pincode": "201309", "latitude": 28.6280, "longitude": 77.3649, "isActive": true},
+  {"id": "loc_noi_expressway", "cityId": "cty_noida", "name": "Noida Expressway (Sector 128-135)", "pincode": "201304", "latitude": 28.5140, "longitude": 77.3820, "isActive": true},
+
+  {"id": "loc_hyd_hitec_city", "cityId": "cty_hyderabad", "name": "Hitec City / Madhapur", "pincode": "500081", "latitude": 17.4474, "longitude": 78.3762, "isActive": true},
+  {"id": "loc_hyd_banjara_hills", "cityId": "cty_hyderabad", "name": "Banjara Hills", "pincode": "500034", "latitude": 17.4156, "longitude": 78.4350, "isActive": true},
+  {"id": "loc_hyd_gachibowli", "cityId": "cty_hyderabad", "name": "Gachibowli", "pincode": "500032", "latitude": 17.4401, "longitude": 78.3489, "isActive": true}
+]

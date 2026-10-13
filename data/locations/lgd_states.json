@@ -1,0 +1,362 @@
+[
+  {
+    "id": "st_01",
+    "lgdCode": 1,
+    "code": "JK",
+    "name": "Jammu and Kashmir",
+    "nameHi": "जम्मू और कश्मीर",
+    "type": "UT",
+    "capital": "Srinagar (Summer), Jammu (Winter)",
+    "isActive": true
+  },
+  {
+    "id": "st_02",
+    "lgdCode": 2,
+    "code": "HP",
+    "name": "Himachal Pradesh",
+    "nameHi": "हिमाचल प्रदेश",
+    "type": "STATE",
+    "capital": "Shimla",
+    "isActive": true
+  },
+  {
+    "id": "st_03",
+    "lgdCode": 3,
+    "code": "PB",
+    "name": "Punjab",
+    "nameHi": "पंजाब",
+    "type": "STATE",
+    "capital": "Chandigarh",
+    "isActive": true
+  },
+  {
+    "id": "st_04",
+    "lgdCode": 4,
+    "code": "CH",
+    "name": "Chandigarh",
+    "nameHi": "चंडीगढ़",
+    "type": "UT",
+    "capital": "Chandigarh",
+    "isActive": true
+  },
+  {
+    "id": "st_05",
+    "lgdCode": 5,
+    "code": "UK",
+    "name": "Uttarakhand",
+    "nameHi": "उत्तराखंड",
+    "type": "STATE",
+    "capital": "Dehradun (Winter), Gairsain (Summer)",
+    "isActive": true
+  },
+  {
+    "id": "st_06",
+    "lgdCode": 6,
+    "code": "HR",
+    "name": "Haryana",
+    "nameHi": "हरियाणा",
+    "type": "STATE",
+    "capital": "Chandigarh",
+    "isActive": true
+  },
+  {
+    "id": "st_07",
+    "lgdCode": 7,
+    "code": "DL",
+    "name": "Delhi",
+    "nameHi": "दिल्ली",
+    "type": "UT",
+    "capital": "New Delhi",
+    "isActive": true
+  },
+  {
+    "id": "st_08",
+    "lgdCode": 8,
+    "code": "RJ",
+    "name": "Rajasthan",
+    "nameHi": "राजस्थान",
+    "type": "STATE",
+    "capital": "Jaipur",
+    "isActive": true
+  },
+  {
+    "id": "st_09",
+    "lgdCode": 9,
+    "code": "UP",
+    "name": "Uttar Pradesh",
+    "nameHi": "उत्तर प्रदेश",
+    "type": "STATE",
+    "capital": "Lucknow",
+    "isActive": true
+  },
+  {
+    "id": "st_10",
+    "lgdCode": 10,
+    "code": "BR",
+    "name": "Bihar",
+    "nameHi": "बिहार",
+    "type": "STATE",
+    "capital": "Patna",
+    "isActive": true
+  },
+  {
+    "id": "st_11",
+    "lgdCode": 11,
+    "code": "SK",
+    "name": "Sikkim",
+    "nameHi": "सिक्किम",
+    "type": "STATE",
+    "capital": "Gangtok",
+    "isActive": true
+  },
+  {
+    "id": "st_12",
+    "lgdCode": 12,
+    "code": "AR",
+    "name": "Arunachal Pradesh",
+    "nameHi": "अरुणाचल प्रदेश",
+    "type": "STATE",
+    "capital": "Itanagar",
+    "isActive": true
+  },
+  {
+    "id": "st_13",
+    "lgdCode": 13,
+    "code": "NL",
+    "name": "Nagaland",
+    "nameHi": "नागालैंड",
+    "type": "STATE",
+    "capital": "Kohima",
+    "isActive": true
+  },
+  {
+    "id": "st_14",
+    "lgdCode": 14,
+    "code": "MN",
+    "name": "Manipur",
+    "nameHi": "मणिपुर",
+    "type": "STATE",
+    "capital": "Imphal",
+    "isActive": true
+  },
+  {
+    "id": "st_15",
+    "lgdCode": 15,
+    "code": "MZ",
+    "name": "Mizoram",
+    "nameHi": "मिज़ोरम",
+    "type": "STATE",
+    "capital": "Aizawl",
+    "isActive": true
+  },
+  {
+    "id": "st_16",
+    "lgdCode": 16,
+    "code": "TR",
+    "name": "Tripura",
+    "nameHi": "त्रिपुरा",
+    "type": "STATE",
+    "capital": "Agartala",
+    "isActive": true
+  },
+  {
+    "id": "st_17",
+    "lgdCode": 17,
+    "code": "ML",
+    "name": "Meghalaya",
+    "nameHi": "मेघालय",
+    "type": "STATE",
+    "capital": "Shillong",
+    "isActive": true
+  },
+  {
+    "id": "st_18",
+    "lgdCode": 18,
+    "code": "AS",
+    "name": "Assam",
+    "nameHi": "असम",
+    "type": "STATE",
+    "capital": "Dispur",
+    "isActive": true
+  },
+  {
+    "id": "st_19",
+    "lgdCode": 19,
+    "code": "WB",
+    "name": "West Bengal",
+    "nameHi": "पश्चिम बंगाल",
+    "type": "STATE",
+    "capital": "Kolkata",
+    "isActive": true
+  },
+  {
+    "id": "st_20",
+    "lgdCode": 20,
+    "code": "JH",
+    "name": "Jharkhand",
+    "nameHi": "झारखंड",
+    "type": "STATE",
+    "capital": "Ranchi",
+    "isActive": true
+  },
+  {
+    "id": "st_21",
+    "lgdCode": 21,
+    "code": "OR",
+    "name": "Odisha",
+    "nameHi": "ओडिशा",
+    "type": "STATE",
+    "capital": "Bhubaneswar",
+    "isActive": true
+  },
+  {
+    "id": "st_22",
+    "lgdCode": 22,
+    "code": "CG",
+    "name": "Chhattisgarh",
+    "nameHi": "छत्तीसगढ़",
+    "type": "STATE",
+    "capital": "Raipur",
+    "isActive": true
+  },
+  {
+    "id": "st_23",
+    "lgdCode": 23,
+    "code": "MP",
+    "name": "Madhya Pradesh",
+    "nameHi": "मध्य प्रदेश",
+    "type": "STATE",
+    "capital": "Bhopal",
+    "isActive": true
+  },
+  {
+    "id": "st_24",
+    "lgdCode": 24,
+    "code": "GJ",
+    "name": "Gujarat",
+    "nameHi": "गुजरात",
+    "type": "STATE",
+    "capital": "Gandhinagar",
+    "isActive": true
+  },
+  {
+    "id": "st_27",
+    "lgdCode": 27,
+    "code": "MH",
+    "name": "Maharashtra",
+    "nameHi": "महाराष्ट्र",
+    "type": "STATE",
+    "capital": "Mumbai",
+    "isActive": true
+  },
+  {
+    "id": "st_28",
+    "lgdCode": 28,
+    "code": "AP",
+    "name": "Andhra Pradesh",
+    "nameHi": "आंध्र प्रदेश",
+    "type": "STATE",
+    "capital": "Amaravati",
+    "isActive": true
+  },
+  {
+    "id": "st_29",
+    "lgdCode": 29,
+    "code": "KA",
+    "name": "Karnataka",
+    "nameHi": "कर्नाटक",
+    "type": "STATE",
+    "capital": "Bengaluru",
+    "isActive": true
+  },
+  {
+    "id": "st_30",
+    "lgdCode": 30,
+    "code": "GA",
+    "name": "Goa",
+    "nameHi": "गोवा",
+    "type": "STATE",
+    "capital": "Panaji",
+    "isActive": true
+  },
+  {
+    "id": "st_31",
+    "lgdCode": 31,
+    "code": "LD",
+    "name": "Lakshadweep",
+    "nameHi": "लक्षद्वीप",
+    "type": "UT",
+    "capital": "Kavaratti",
+    "isActive": true
+  },
+  {
+    "id": "st_32",
+    "lgdCode": 32,
+    "code": "KL",
+    "name": "Kerala",
+    "nameHi": "केरल",
+    "type": "STATE",
+    "capital": "Thiruvananthapuram",
+    "isActive": true
+  },
+  {
+    "id": "st_33",
+    "lgdCode": 33,
+    "code": "TN",
+    "name": "Tamil Nadu",
+    "nameHi": "तमिलनाडु",
+    "type": "STATE",
+    "capital": "Chennai",
+    "isActive": true
+  },
+  {
+    "id": "st_34",
+    "lgdCode": 34,
+    "code": "PY",
+    "name": "Puducherry",
+    "nameHi": "पुडुचेरी",
+    "type": "UT",
+    "capital": "Puducherry",
+    "isActive": true
+  },
+  {
+    "id": "st_35",
+    "lgdCode": 35,
+    "code": "AN",
+    "name": "Andaman and Nicobar Islands",
+    "nameHi": "अंडमान और निकोबार द्वीप समूह",
+    "type": "UT",
+    "capital": "Port Blair",
+    "isActive": true
+  },
+  {
+    "id": "st_36",
+    "lgdCode": 36,
+    "code": "TS",
+    "name": "Telangana",
+    "nameHi": "तेलंगाना",
+    "type": "STATE",
+    "capital": "Hyderabad",
+    "isActive": true
+  },
+  {
+    "id": "st_37",
+    "lgdCode": 37,
+    "code": "LA",
+    "name": "Ladakh",
+    "nameHi": "लद्दाख",
+    "type": "UT",
+    "capital": "Leh",
+    "isActive": true
+  },
+  {
+    "id": "st_38",
+    "lgdCode": 38,
+    "code": "DH",
+    "name": "Dadra and Nagar Haveli and Daman and Diu",
+    "nameHi": "दादरा और नगर हवेली और दमन और दीव",
+    "type": "UT",
+    "capital": "Daman",
+    "isActive": true
+  }
+]

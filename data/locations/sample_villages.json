@@ -1,0 +1,10 @@
+[
+  {"id": "vlg_23_indore_rangwasa", "districtId": "dst_23_indore", "subdistrictId": "sbd_23_indore_rau", "name": "Rangwasa", "nameHi": "रंगवासा", "lgdCode": 482101, "pincode": "453331", "isActive": true},
+  {"id": "vlg_23_indore_machal", "districtId": "dst_23_indore", "subdistrictId": "sbd_23_indore_depalpur", "name": "Machal", "nameHi": "माचल", "lgdCode": 482102, "pincode": "453001", "isActive": true},
+  {"id": "vlg_23_indore_pedmi", "districtId": "dst_23_indore", "subdistrictId": "sbd_23_indore_sanwer", "name": "Pedmi", "nameHi": "पेड़मी", "lgdCode": 482103, "pincode": "452020", "isActive": true},
+  {"id": "vlg_23_indore_hasalpur", "districtId": "dst_23_indore", "subdistrictId": "sbd_23_indore_mhow", "name": "Hasalpur", "nameHi": "हसलपुर", "lgdCode": 482104, "pincode": "453441", "isActive": true},
+  {"id": "vlg_23_ujjain_matana", "districtId": "dst_23_ujjain", "subdistrictId": "sbd_23_ujjain_kothi", "name": "Matana Buzurg", "nameHi": "मताना बुजुर्ग", "lgdCode": 483101, "pincode": "456006", "isActive": true},
+  {"id": "vlg_23_dhar_mandav", "districtId": "dst_23_dhar", "subdistrictId": "sbd_23_dhar_mandav", "name": "Sulibardi", "nameHi": "सुलीबर्डी", "lgdCode": 484101, "pincode": "454010", "isActive": true},
+  {"id": "vlg_27_pune_wagholi", "districtId": "dst_27_pune", "subdistrictId": "sbd_27_haveli", "name": "Perne", "nameHi": "पेरणे", "lgdCode": 551101, "pincode": "412216", "isActive": true},
+  {"id": "vlg_29_bengaluru_sarjapura", "districtId": "dst_29_bengaluru_urban", "subdistrictId": "sbd_29_anekal", "name": "Mugalur", "nameHi": "मुगलुरु", "lgdCode": 612101, "pincode": "562125", "isActive": true}
+]

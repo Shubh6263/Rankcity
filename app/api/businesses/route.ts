@@ -1,14 +1,32 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { locationDb } from '@/lib/location/service';
 
 export async function GET(req: NextRequest) {
   const { searchParams } = new URL(req.url);
   const ownerId = searchParams.get('ownerId') || searchParams.get('publisherId') || undefined;
+  const locationId = searchParams.get('locationId') || undefined;
+  const cityId = searchParams.get('cityId') || undefined;
+  const districtId = searchParams.get('districtId') || undefined;
+  const stateId = searchParams.get('stateId') || undefined;
+  const city = searchParams.get('city') || undefined;
+  const pincode = searchParams.get('pincode') || undefined;
+  const search = searchParams.get('search') || searchParams.get('q') || undefined;
 
-  const businesses = db.getBusinesses(ownerId);
+  const businesses = db.getBusinesses({
+    ownerId,
+    locationId,
+    cityId,
+    districtId,
+    stateId,
+    city,
+    pincode,
+    search,
+  });
+
   const enriched = businesses.map((biz) => {
     const category = db.getCategoryById(biz.categoryId);
-    const location = db.getLocationById(biz.locationId);
+    const location = db.getLocationById(biz.locationId || biz.cityId || '');
     const activeCampaign = db.campaigns.find(
       (c) => (c.businessId === biz.id || c.websiteId === biz.id) && c.status === 'active'
     );
@@ -16,7 +34,11 @@ export async function GET(req: NextRequest) {
     return {
       ...biz,
       categoryName: category?.name || 'Local Service',
-      locationName: location ? `${location.city}, ${location.state}` : 'India',
+      locationName: location
+        ? `${location.city}, ${location.state}`
+        : biz.city
+        ? `${biz.city}, ${biz.state || 'India'}`
+        : 'India',
       activeCampaign,
     };
   });
@@ -34,6 +56,19 @@ export async function GET(req: NextRequest) {
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
+
+    // Hierarchy Consistency Validation
+    if (body.stateId || body.districtId || body.cityId || body.villageId) {
+      const hierarchyCheck = locationDb.validateHierarchy({
+        stateId: body.stateId,
+        districtId: body.districtId,
+        cityId: body.cityId,
+        villageId: body.villageId,
+      });
+      if (!hierarchyCheck.valid) {
+        return NextResponse.json({ error: hierarchyCheck.error }, { status: 400 });
+      }
+    }
     const result = db.createBusiness({
       ownerId: body.ownerId || body.publisherId,
       name: body.name || body.title,
@@ -44,6 +79,11 @@ export async function POST(req: NextRequest) {
       categoryId: body.categoryId,
       subcategoryId: body.subcategoryId,
       locationId: body.locationId,
+      stateId: body.stateId,
+      districtId: body.districtId,
+      cityId: body.cityId,
+      localityId: body.localityId,
+      pincodeId: body.pincodeId,
       address: body.address,
       locality: body.locality,
       city: body.city,
