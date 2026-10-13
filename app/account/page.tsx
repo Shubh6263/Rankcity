@@ -35,10 +35,11 @@ export default function CustomerAccountPage() {
   useEffect(() => {
     async function loadCustomerData() {
       try {
+        const userId = currentUser?.id || 'guest_user';
         const [favRes, bizRes, revRes] = await Promise.all([
-          fetch(`/api/favorites?userId=${currentUser.id}`),
+          fetch(`/api/favorites?userId=${userId}`),
           fetch('/api/businesses'),
-          fetch(`/api/reviews?userId=${currentUser.id}`),
+          fetch(`/api/reviews?userId=${userId}`),
         ]);
 
         if (favRes.ok) {
@@ -65,7 +66,7 @@ export default function CustomerAccountPage() {
     }
 
     loadCustomerData();
-  }, [currentUser.id]);
+  }, [currentUser?.id]);
 
   const navItems = [
     { id: 'profile', label: 'My Profile', icon: User },

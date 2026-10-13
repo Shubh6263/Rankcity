@@ -27,7 +27,8 @@ export default function SavedBusinessesPage() {
 
   const fetchSaved = async () => {
     try {
-      const res = await fetch(`/api/favorites?userId=${currentUser.id}`);
+      const userId = currentUser?.id || 'guest_user';
+      const res = await fetch(`/api/favorites?userId=${userId}`);
       if (res.ok) {
         const data = await res.json();
         setBusinesses(data.businesses || []);
@@ -41,7 +42,7 @@ export default function SavedBusinessesPage() {
 
   useEffect(() => {
     fetchSaved();
-  }, [currentUser.id]);
+  }, [currentUser?.id]);
 
   const handleRemove = async (businessId: string) => {
     try {

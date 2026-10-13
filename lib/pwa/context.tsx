@@ -89,14 +89,19 @@ export function PwaProvider({ children }: { children: React.ReactNode }) {
       /iPad|iPhone|iPod/.test(ua) && !(window as unknown as { MSStream?: unknown }).MSStream;
     setIsIos(isIosDevice);
 
-    // Check banner dismiss status from localStorage
+    // Check banner dismiss status from sessionStorage (session snooze)
     try {
-      const dismissedAt = localStorage.getItem('rankcity_pwa_install_dismissed');
-      if (dismissedAt) {
-        const timeDiff = Date.now() - parseInt(dismissedAt, 10);
-        setIsBannerDismissed(timeDiff < DISMISS_TIMEOUT_MS);
+      const isSessionDismissed = sessionStorage.getItem('rankcity_pwa_install_dismissed');
+      if (isSessionDismissed) {
+        setIsBannerDismissed(true);
       } else {
-        setIsBannerDismissed(false);
+        const dismissedAt = localStorage.getItem('rankcity_pwa_install_dismissed');
+        if (dismissedAt) {
+          const timeDiff = Date.now() - parseInt(dismissedAt, 10);
+          setIsBannerDismissed(timeDiff < 2 * 60 * 60 * 1000); // 2 hours snooze
+        } else {
+          setIsBannerDismissed(false);
+        }
       }
     } catch {
       setIsBannerDismissed(false);
@@ -202,14 +207,16 @@ export function PwaProvider({ children }: { children: React.ReactNode }) {
         return false;
       } catch (err) {
         console.error('[PWA] Error calling prompt():', err);
+        setShowIosGuide(true);
         return false;
       }
-    } else if (isIos && !isInstalled) {
+    } else if (!isInstalled) {
+      // If native beforeinstallprompt is not available, show step-by-step install guide
       setShowIosGuide(true);
       return false;
     }
     return false;
-  }, [deferredPrompt, isIos, isInstalled]);
+  }, [deferredPrompt, isInstalled]);
 
   // Apply service worker update
   const applyUpdate = useCallback(() => {
@@ -228,6 +235,7 @@ export function PwaProvider({ children }: { children: React.ReactNode }) {
   const dismissInstallBanner = useCallback(() => {
     setIsBannerDismissed(true);
     try {
+      sessionStorage.setItem('rankcity_pwa_install_dismissed', 'true');
       localStorage.setItem('rankcity_pwa_install_dismissed', Date.now().toString());
     } catch {
       // ignore
@@ -242,7 +250,7 @@ export function PwaProvider({ children }: { children: React.ReactNode }) {
   return (
     <PwaContext.Provider
       value={{
-        isInstallable: !!deferredPrompt || (isIos && !isInstalled),
+        isInstallable: !isInstalled,
         isInstalled,
         isIos,
         isOnline,

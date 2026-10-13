@@ -5,7 +5,7 @@ import { usePwa } from '@/lib/pwa/context';
 import { Share, PlusSquare, X, Smartphone } from 'lucide-react';
 
 export function IosInstallGuideModal() {
-  const { showIosGuide, setShowIosGuide } = usePwa();
+  const { showIosGuide, setShowIosGuide, isIos } = usePwa();
 
   // Close on Escape key press
   useEffect(() => {
@@ -49,14 +49,16 @@ export function IosInstallGuideModal() {
             </div>
             <div>
               <h3 id="ios-install-title" className="text-base font-bold text-neutral-900 tracking-tight">
-                Install RankCity on iOS
+                {isIos ? 'Install RankCity on iOS' : 'Install RankCity App'}
               </h3>
-              <p className="text-xs text-neutral-500">Apple iPhone & iPad Safari</p>
+              <p className="text-xs text-neutral-500">
+                {isIos ? 'Apple iPhone & iPad Safari' : 'Chrome, Edge & Android'}
+              </p>
             </div>
           </div>
           <button
             onClick={() => setShowIosGuide(false)}
-            aria-label="Close iOS install guide"
+            aria-label="Close install guide"
             className="p-1 rounded-full text-neutral-400 hover:text-neutral-700 hover:bg-neutral-100 transition-colors cursor-pointer"
           >
             <X className="w-5 h-5" />
@@ -64,37 +66,70 @@ export function IosInstallGuideModal() {
         </div>
 
         <p className="text-xs text-neutral-600 mb-5 leading-relaxed">
-          To install RankCity as a native app on iOS, follow these 3 quick steps in Safari:
+          {isIos
+            ? 'To install RankCity as a native app on iOS, follow these 3 quick steps in Safari:'
+            : 'To install RankCity directly to your device home screen, follow these quick steps:'}
         </p>
 
-        <div className="space-y-3.5 mb-6">
-          <div className="flex items-center gap-3 p-2.5 rounded-xl bg-neutral-50 border border-neutral-100">
-            <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
-              <Share className="w-4 h-4 text-blue-600" />
+        {isIos ? (
+          <div className="space-y-3.5 mb-6">
+            <div className="flex items-center gap-3 p-2.5 rounded-xl bg-neutral-50 border border-neutral-100">
+              <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+                <Share className="w-4 h-4 text-blue-600" />
+              </div>
+              <p className="text-xs font-semibold text-neutral-800">
+                1. Tap the <span className="text-blue-600 font-bold">Share</span> button at the bottom of Safari.
+              </p>
             </div>
-            <p className="text-xs font-semibold text-neutral-800">
-              1. Tap the <span className="text-blue-600 font-bold">Share</span> button at the bottom of Safari.
-            </p>
-          </div>
 
-          <div className="flex items-center gap-3 p-2.5 rounded-xl bg-neutral-50 border border-neutral-100">
-            <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
-              <PlusSquare className="w-4 h-4 text-blue-600" />
+            <div className="flex items-center gap-3 p-2.5 rounded-xl bg-neutral-50 border border-neutral-100">
+              <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+                <PlusSquare className="w-4 h-4 text-blue-600" />
+              </div>
+              <p className="text-xs font-semibold text-neutral-800">
+                2. Scroll down and tap <span className="font-bold">Add to Home Screen</span>.
+              </p>
             </div>
-            <p className="text-xs font-semibold text-neutral-800">
-              2. Scroll down and tap <span className="font-bold">Add to Home Screen</span>.
-            </p>
-          </div>
 
-          <div className="flex items-center gap-3 p-2.5 rounded-xl bg-neutral-50 border border-neutral-100">
-            <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
-              <Smartphone className="w-4 h-4 text-emerald-600" />
+            <div className="flex items-center gap-3 p-2.5 rounded-xl bg-neutral-50 border border-neutral-100">
+              <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+                <Smartphone className="w-4 h-4 text-emerald-600" />
+              </div>
+              <p className="text-xs font-semibold text-neutral-800">
+                3. Tap <span className="font-bold">Add</span> in the top-right corner to finish.
+              </p>
             </div>
-            <p className="text-xs font-semibold text-neutral-800">
-              3. Tap <span className="font-bold">Add</span> in the top-right corner to finish.
-            </p>
           </div>
-        </div>
+        ) : (
+          <div className="space-y-3.5 mb-6">
+            <div className="flex items-center gap-3 p-2.5 rounded-xl bg-neutral-50 border border-neutral-100">
+              <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+                <span className="font-black text-sm">⋮</span>
+              </div>
+              <p className="text-xs font-semibold text-neutral-800">
+                1. Tap your browser menu <span className="text-blue-600 font-bold">(⋮)</span> in the top-right corner.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-3 p-2.5 rounded-xl bg-neutral-50 border border-neutral-100">
+              <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+                <PlusSquare className="w-4 h-4 text-blue-600" />
+              </div>
+              <p className="text-xs font-semibold text-neutral-800">
+                2. Tap <span className="font-bold">Install app</span> or <span className="font-bold">Add to Home screen</span>.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-3 p-2.5 rounded-xl bg-neutral-50 border border-neutral-100">
+              <div className="w-8 h-8 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+                <Smartphone className="w-4 h-4 text-emerald-600" />
+              </div>
+              <p className="text-xs font-semibold text-neutral-800">
+                3. Confirm and enjoy instant offline access from your app launcher!
+              </p>
+            </div>
+          </div>
+        )}
 
         <button
           onClick={() => setShowIosGuide(false)}

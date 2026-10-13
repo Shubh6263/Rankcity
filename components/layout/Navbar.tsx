@@ -4,7 +4,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
 import { useAuth } from '@/lib/auth/context';
-import { InstallAppButton } from '@/components/pwa/InstallAppButton';
 import { MobileLocationDrawer } from '@/components/layout/MobileLocationDrawer';
 import { AppSidebar } from '@/components/layout/AppSidebar';
 import { NotificationDrawer } from '@/components/layout/NotificationDrawer';
@@ -279,8 +278,10 @@ export function Navbar() {
     { label: 'Home', href: '/', icon: HomeIcon, isActive: pathname === '/' },
     { label: 'Explore', href: '/explore', icon: Compass, isActive: pathname.startsWith('/explore') || pathname.includes('/hotels') },
     { label: 'Saved', href: '/saved', icon: Heart, isActive: pathname === '/saved' },
-    { label: 'Account', href: '/account', icon: User, isActive: pathname === '/account' },
-  ];  const toggleMenu = (menu: 'categories' | 'cities' | 'business' | 'citySelect' | 'account') => {
+    { label: 'Account', href: '/account', icon: User, isActive: pathname === '/account' || pathname === '/profile' },
+  ];
+
+  const toggleMenu = (menu: 'categories' | 'cities' | 'business' | 'citySelect' | 'account') => {
     setActiveMenu((prev) => (prev === menu ? null : menu));
   };
 
@@ -296,7 +297,7 @@ export function Navbar() {
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 sm:h-18 flex items-center justify-between">
           {/* Left: Hamburger (Mobile) + Brand Wordmark + Navigation Menus */}
-          <div className="flex items-center gap-2 sm:gap-3 lg:gap-8 xl:gap-9">
+          <div className="flex items-center gap-1.5 sm:gap-3 lg:gap-8 xl:gap-9 shrink-0 min-w-0">
             {/* App Sidebar Menu Hamburger Button (Left side) */}
             <button
               type="button"
@@ -312,7 +313,9 @@ export function Navbar() {
               <img
                 src="/rankcity-logo.png"
                 alt="RankCity - Discover Local Businesses"
-                className="h-8 sm:h-9 md:h-10 w-auto object-contain transition-transform group-hover:scale-102"
+                width={120}
+                height={36}
+                className="h-8 sm:h-9 md:h-10 w-auto min-w-[90px] object-contain transition-transform group-hover:scale-102 shrink-0"
               />
             </Link>
 
@@ -544,8 +547,8 @@ export function Navbar() {
             </nav>
           </div>
 
-          {/* Right Action Center: City Selector + Dashboard + Add Business CTA + Clerk Auth */}
-          <div className="flex items-center gap-2.5 sm:gap-3.5 lg:gap-4">
+          {/* Right Action Center: City Selector + Dashboard + Add Business CTA + Notification + Clerk Auth */}
+          <div className="flex items-center gap-1.5 sm:gap-3 lg:gap-4 shrink-0">
             {/* 1. Interactive City & Live Location Selector Pill */}
             <div className="relative">
               <button
@@ -557,14 +560,14 @@ export function Navbar() {
                     toggleMenu('citySelect');
                   }
                 }}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-neutral-700 bg-neutral-50 hover:bg-neutral-100 border border-neutral-200 rounded-full transition-all cursor-pointer shadow-2xs"
+                className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 text-xs font-medium text-neutral-700 bg-neutral-50 hover:bg-neutral-100 border border-neutral-200 rounded-full transition-all cursor-pointer shadow-2xs"
               >
                 {locSource === 'browser_gps' ? (
                   <Navigation2 className="w-3.5 h-3.5 text-emerald-600 fill-emerald-600 shrink-0 animate-pulse" />
                 ) : (
                   <MapPin className="w-3.5 h-3.5 text-blue-600 shrink-0" />
                 )}
-                <span className="max-w-[110px] truncate">{userCity}</span>
+                <span className="max-w-[70px] sm:max-w-[110px] truncate">{userCity}</span>
                 <ChevronDown
                   className={`w-3 h-3 text-neutral-400 transition-transform ${
                     activeMenu === 'citySelect' ? 'rotate-180' : ''
@@ -636,13 +639,6 @@ export function Navbar() {
               </Link>
             </Show>
 
-            {/* PWA Install Button */}
-            <InstallAppButton
-              variant="outline"
-              size="sm"
-              className="hidden lg:inline-flex rounded-full text-xs font-medium"
-            />
-
             {/* 3. Primary "Add Your Business" CTA (Hidden on small mobile to prevent header overflow) */}
             <Link
               href="/add-business"
@@ -651,19 +647,37 @@ export function Navbar() {
               <span>Add Your Business</span>
             </Link>
 
-            {/* 4. Clerk Auth Controls: Sign In Button or User Avatar Button */}
+            {/* 4. Notification Bell Button (Placed BEFORE Profile / Avatar) */}
+            <button
+              type="button"
+              onClick={() => setIsNotificationsOpen(true)}
+              aria-label="Open notifications"
+              className="relative p-2 text-neutral-600 hover:text-neutral-900 rounded-full hover:bg-neutral-100 transition-colors cursor-pointer shrink-0"
+              title="Notifications"
+            >
+              <Bell className="w-4.5 h-4.5" />
+              {unreadCount > 0 && (
+                <span className="absolute top-1 right-1 flex h-2.5 w-2.5">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75" />
+                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-blue-600" />
+                </span>
+              )}
+            </button>
+
+            {/* 5. Clerk Auth / Profile Controls */}
             <Show when="signed-out">
               <SignInButton mode="modal">
                 <button
                   type="button"
-                  className="hidden sm:inline-flex px-3 py-1.5 text-xs font-medium text-neutral-700 hover:text-neutral-950 bg-neutral-100/90 hover:bg-neutral-200/80 rounded-full transition-colors cursor-pointer"
+                  className="px-2.5 sm:px-3 py-1.5 text-xs font-semibold text-neutral-700 hover:text-neutral-950 bg-neutral-100/90 hover:bg-neutral-200/80 rounded-full transition-colors cursor-pointer flex items-center gap-1.5 shrink-0"
                 >
-                  Sign In
+                  <User className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline">Sign In</span>
                 </button>
               </SignInButton>
             </Show>
             <Show when="signed-in">
-              <div className="flex items-center gap-2 pl-0.5">
+              <div className="flex items-center gap-2 pl-0.5 shrink-0">
                 <Link
                   href="/profile"
                   className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-neutral-700 hover:text-blue-600 bg-neutral-100/90 hover:bg-neutral-200/80 rounded-full transition-colors cursor-pointer"
@@ -675,23 +689,6 @@ export function Navbar() {
                 <UserButton />
               </div>
             </Show>
-
-            {/* Notification Bell Button */}
-            <button
-              type="button"
-              onClick={() => setIsNotificationsOpen(true)}
-              aria-label="Open notifications"
-              className="relative p-2 text-neutral-600 hover:text-neutral-900 rounded-full hover:bg-neutral-100 transition-colors cursor-pointer"
-              title="Notifications"
-            >
-              <Bell className="w-4.5 h-4.5" />
-              {unreadCount > 0 && (
-                <span className="absolute top-1 right-1 flex h-2.5 w-2.5">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75" />
-                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-blue-600" />
-                </span>
-              )}
-            </button>
           </div>
         </div>
       </header>
@@ -713,7 +710,7 @@ export function Navbar() {
       {/* Customer Mobile Bottom Navigation Bar: Home | Explore | Saved | Account */}
       <nav
         aria-label="Mobile Navigation"
-        className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-neutral-200 py-1.5 px-2 flex items-center justify-around shadow-lg"
+        className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-md border-t border-neutral-200 py-1 px-2 flex items-center justify-around shadow-lg pointer-events-auto pb-[max(0.375rem,env(safe-area-inset-bottom))]"
       >
         {mobileBottomNav.map((item, idx) => {
           const Icon = item.icon;
@@ -721,12 +718,12 @@ export function Navbar() {
             <Link
               key={idx}
               href={item.href}
-              className={`flex flex-col items-center justify-center p-1.5 rounded-lg text-center transition-colors ${
-                item.isActive ? 'text-blue-600 font-bold' : 'text-neutral-500 hover:text-neutral-900'
+              className={`flex-1 flex flex-col items-center justify-center py-1.5 px-1 rounded-xl text-center touch-manipulation select-none active:scale-95 transition-all ${
+                item.isActive ? 'text-blue-600 font-bold' : 'text-neutral-500 hover:text-neutral-900 font-medium'
               }`}
             >
-              <Icon className="w-5 h-5 mb-0.5" />
-              <span className="text-[10px] tracking-tight">{item.label}</span>
+              <Icon className="w-5 h-5 mb-0.5 shrink-0" />
+              <span className="text-[10px] leading-tight tracking-tight">{item.label}</span>
             </Link>
           );
         })}
