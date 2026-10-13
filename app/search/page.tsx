@@ -10,6 +10,7 @@ import { BusinessCard } from '@/components/business/BusinessCard';
 import { BusinessListSkeleton } from '@/components/business/BusinessCardSkeleton';
 import { Business, Category, LocationHierarchy } from '@/types';
 import { useUserLocation, calculateDistanceKm } from '@/lib/location/context';
+import { CITIES_DIRECTORY } from '@/lib/location/cities';
 import {
   Search,
   MapPin,
@@ -199,11 +200,11 @@ function SearchResultsContent() {
                 onChange={(e) => setCity(e.target.value)}
                 className="px-2 py-2 bg-transparent text-xs font-semibold text-neutral-800 focus:outline-none cursor-pointer"
               >
-                <option value="indore">📍 Indore</option>
-                <option value="bhopal">📍 Bhopal</option>
-                <option value="mumbai">📍 Mumbai</option>
-                <option value="bengaluru">📍 Bengaluru</option>
-                <option value="delhi">📍 New Delhi</option>
+                {CITIES_DIRECTORY.map((c) => (
+                  <option key={c.slug} value={c.slug}>
+                    📍 {c.name}
+                  </option>
+                ))}
               </select>
             </div>
 

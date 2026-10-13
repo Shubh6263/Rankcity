@@ -2,6 +2,7 @@
 
 import React, { useEffect } from 'react';
 import { useUserLocation } from '@/lib/location/context';
+import { CITIES_DIRECTORY } from '@/lib/location/cities';
 import { Navigation2, Loader2, MapPin, X, CheckCircle2 } from 'lucide-react';
 
 interface MobileLocationDrawerProps {
@@ -23,13 +24,11 @@ export function MobileLocationDrawer({
     requestCurrentLocation,
   } = useUserLocation();
 
-  const cities = [
-    { name: 'Indore', slug: 'indore', badge: 'Active Hub' },
-    { name: 'Bhopal', slug: 'bhopal', badge: 'Capital' },
-    { name: 'Mumbai', slug: 'mumbai', badge: 'Metro' },
-    { name: 'Bengaluru', slug: 'bengaluru', badge: 'Tech' },
-    { name: 'New Delhi', slug: 'delhi', badge: 'NCR' },
-  ];
+  const cities = CITIES_DIRECTORY.map((c) => ({
+    name: c.name,
+    slug: c.slug,
+    badge: c.badge,
+  }));
 
   // Close on Escape key press
   useEffect(() => {

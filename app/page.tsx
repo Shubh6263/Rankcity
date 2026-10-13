@@ -42,6 +42,7 @@ import {
   getCachedCategories,
   setCachedCategories,
 } from '@/lib/cache/dataCache';
+import { CITIES_DIRECTORY } from '@/lib/location/cities';
 
 export default function HomePage() {
   const router = useRouter();
@@ -213,11 +214,11 @@ export default function HomePage() {
                 onChange={(e) => setSelectedCity(e.target.value)}
                 className="text-xs font-semibold bg-transparent border-0 focus:outline-none text-neutral-800 py-2.5 cursor-pointer capitalize"
               >
-                <option value="indore">Indore</option>
-                <option value="bhopal">Bhopal</option>
-                <option value="mumbai">Mumbai</option>
-                <option value="bengaluru">Bengaluru</option>
-                <option value="delhi">New Delhi</option>
+                {CITIES_DIRECTORY.map((c) => (
+                  <option key={c.slug} value={c.slug}>
+                    {c.name}
+                  </option>
+                ))}
               </select>
             </div>
 
@@ -311,11 +312,11 @@ export default function HomePage() {
                 onChange={(e) => setSelectedCity(e.target.value)}
                 className="text-xs font-semibold bg-transparent border-0 focus:outline-none text-neutral-800 py-2.5 cursor-pointer capitalize"
               >
-                <option value="indore">Indore</option>
-                <option value="bhopal">Bhopal</option>
-                <option value="mumbai">Mumbai</option>
-                <option value="bengaluru">Bengaluru</option>
-                <option value="delhi">New Delhi</option>
+                {CITIES_DIRECTORY.map((c) => (
+                  <option key={c.slug} value={c.slug}>
+                    {c.name}
+                  </option>
+                ))}
               </select>
             </div>
             <button

@@ -23,6 +23,7 @@ import {
   ExternalLink,
 } from 'lucide-react';
 import { generateBreadcrumbSchema, generateFAQSchema } from '@/lib/seo/schema';
+import { CITIES_DIRECTORY } from '@/lib/location/cities';
 
 export default function ExplorePage() {
   const { currentUser } = useAuth();
@@ -37,7 +38,7 @@ export default function ExplorePage() {
   const [savedBizIds, setSavedBizIds] = useState<Set<string>>(new Set());
   const [isLoading, setIsLoading] = useState(true);
 
-  const cities = ['Indore', 'Bhopal', 'Mumbai', 'Bengaluru', 'New Delhi'];
+  const cities = CITIES_DIRECTORY.map((c) => c.name);
 
   useEffect(() => {
     async function loadData() {

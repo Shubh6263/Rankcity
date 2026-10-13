@@ -13,6 +13,7 @@ import {
   Show,
   UserButton,
 } from '@clerk/nextjs';
+import { CITIES_DIRECTORY } from '@/lib/location/cities';
 import {
   Bell,
   MapPin,
@@ -108,13 +109,11 @@ export function Navbar() {
     setIsNotificationsOpen(false);
   }, [pathname]);
 
-  const cities = [
-    { name: 'Indore', slug: 'indore', badge: 'Active Hub' },
-    { name: 'Bhopal', slug: 'bhopal', badge: 'Capital' },
-    { name: 'Mumbai', slug: 'mumbai', badge: 'Metro' },
-    { name: 'Bengaluru', slug: 'bengaluru', badge: 'Tech' },
-    { name: 'New Delhi', slug: 'delhi', badge: 'NCR' },
-  ];
+  const cities = CITIES_DIRECTORY.map((c) => ({
+    name: c.name,
+    slug: c.slug,
+    badge: c.badge,
+  }));
 
   const handleCitySelect = (cityName: string, slug: string) => {
     setManualCity(cityName);
@@ -240,38 +239,12 @@ export function Navbar() {
     },
   ];
 
-  const cityShowcase: MegaItem[] = [
-    {
-      title: 'Indore, MP',
-      href: '/indore/hotels',
-      icon: <MapPin className="w-4 h-4" />,
-      description: 'Vijay Nagar, Palasia, Rajwada, Geeta Bhawan',
-    },
-    {
-      title: 'Bhopal, MP',
-      href: '/bhopal/hotels',
-      icon: <MapPin className="w-4 h-4" />,
-      description: 'MP Nagar, Arera Colony, New Market',
-    },
-    {
-      title: 'Mumbai, MH',
-      href: '/mumbai/hotels',
-      icon: <MapPin className="w-4 h-4" />,
-      description: 'Bandra, Andheri, BKC, South Mumbai',
-    },
-    {
-      title: 'Bengaluru, KA',
-      href: '/bengaluru/hotels',
-      icon: <MapPin className="w-4 h-4" />,
-      description: 'Indiranagar, Koramangala, Whitefield',
-    },
-    {
-      title: 'New Delhi, NCR',
-      href: '/delhi/hotels',
-      icon: <MapPin className="w-4 h-4" />,
-      description: 'Connaught Place, South Ex, Aerocity',
-    },
-  ];
+  const cityShowcase: MegaItem[] = CITIES_DIRECTORY.map((c) => ({
+    title: `${c.name}, ${c.state}`,
+    href: `/${c.slug}/hotels`,
+    icon: <MapPin className="w-4 h-4" />,
+    description: c.localities,
+  }));
 
   // Customer Mobile Bottom Navigation Bar items:
   const mobileBottomNav = [
@@ -448,18 +421,23 @@ export function Navbar() {
                 {activeMenu === 'cities' && (
                   <div
                     onMouseLeave={() => setActiveMenu(null)}
-                    className="absolute left-0 mt-2 w-[480px] bg-white border border-neutral-200/90 rounded-2xl shadow-2xl p-4 z-50 animate-in fade-in zoom-in-95 duration-150"
+                    className="absolute left-0 mt-2 w-[540px] bg-white border border-neutral-200/90 rounded-2xl shadow-2xl p-4 z-50 animate-in fade-in zoom-in-95 duration-150"
                   >
-                    <div className="text-[11px] font-bold uppercase tracking-wider text-neutral-400 mb-2 px-2">
-                      Top Discovery Cities
+                    <div className="flex items-center justify-between mb-2 px-2">
+                      <span className="text-[11px] font-bold uppercase tracking-wider text-neutral-400">
+                        Top Discovery Cities ({cityShowcase.length})
+                      </span>
+                      <span className="text-[10px] text-blue-600 font-semibold">
+                        Pan-India Hubs
+                      </span>
                     </div>
-                    <div className="grid grid-cols-2 gap-2">
+                    <div className="grid grid-cols-2 gap-2 max-h-[380px] overflow-y-auto pr-1">
                       {cityShowcase.map((item) => (
                         <ListItem key={item.title} item={item} />
                       ))}
                     </div>
                     <div className="mt-3 pt-3 border-t border-neutral-100 px-2 flex items-center justify-between text-xs text-neutral-500">
-                      <span>Currently active in 5 commercial hubs</span>
+                      <span>Currently active in {cityShowcase.length} commercial hubs</span>
                       <Link href="/explore" className="font-semibold text-blue-600 hover:text-blue-700">
                         View City Directory
                       </Link>
