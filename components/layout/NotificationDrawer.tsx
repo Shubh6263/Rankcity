@@ -129,7 +129,7 @@ export function NotificationDrawer({
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
-      className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex justify-end animate-in fade-in duration-200"
+      className="fixed inset-0 z-[70] bg-black/60 backdrop-blur-xs flex justify-end animate-in fade-in duration-200"
     >
       <div className="relative w-84 sm:w-96 max-w-[90vw] h-full bg-white text-neutral-900 shadow-2xl flex flex-col justify-between overflow-hidden animate-in slide-in-from-right duration-300">
         {/* Header */}

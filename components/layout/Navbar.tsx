@@ -302,7 +302,7 @@ export function Navbar() {
             <button
               type="button"
               onClick={() => setIsSidebarOpen(true)}
-              className="lg:hidden -ml-1 p-2 text-neutral-700 hover:text-neutral-950 hover:bg-neutral-100 rounded-xl transition-colors cursor-pointer shrink-0"
+              className="-ml-1 p-2 text-neutral-700 hover:text-neutral-950 hover:bg-neutral-100 rounded-xl transition-colors cursor-pointer shrink-0 flex items-center justify-center"
               aria-label="Open App Sidebar Menu"
               title="Open Menu"
             >
