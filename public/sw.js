@@ -3,7 +3,7 @@
  * Version: 1.1.0
  */
 
-const VERSION = 'rankcity-v1.3';
+const VERSION = 'rankcity-v1.4';
 const STATIC_CACHE = `${VERSION}-static`;
 const RUNTIME_CACHE = `${VERSION}-runtime`;
 const IMAGE_CACHE = `${VERSION}-images`;
@@ -268,7 +268,14 @@ self.addEventListener('fetch', (event) => {
             if (url.pathname.includes('/icons/')) {
               return caches.match('/icons/icon-192x192.png');
             }
-            return new Response('', { status: 408, statusText: 'Request timed out' });
+            // Return lightweight 1x1 transparent SVG image placeholder (status 200) to avoid 408 error
+            return new Response(
+              '<svg xmlns="http://www.w3.org/2000/svg" width="1" height="1"/>',
+              {
+                status: 200,
+                headers: { 'Content-Type': 'image/svg+xml' },
+              }
+            );
           });
       })
     );
@@ -326,16 +333,9 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Default: Network fetch with error handling
-  event.respondWith(
-    fetch(request).catch((err) => {
-      console.warn('[PWA SW] Network fetch failed or cancelled:', request.url, err.message);
-      return new Response('', {
-        status: 408,
-        statusText: 'Request cancelled or network unavailable',
-      });
-    })
-  );
+  // Default: Let browser handle all other requests natively via standard network pipeline.
+  // Do NOT call event.respondWith() so cancellations or third-party requests are handled naturally.
+  return;
 });
 
 // Listen for messages from client
