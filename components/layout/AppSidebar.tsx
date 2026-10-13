@@ -32,6 +32,19 @@ interface AppSidebarProps {
   onOpenLocationDrawer?: () => void;
 }
 
+interface SidebarMenuItem {
+  label: string;
+  href: string;
+  icon: React.ComponentType<{ className?: string }>;
+  badge?: string;
+  highlight?: boolean;
+}
+
+interface SidebarSection {
+  title: string;
+  items: SidebarMenuItem[];
+}
+
 export function AppSidebar({ isOpen, onClose, onOpenLocationDrawer }: AppSidebarProps) {
   const pathname = usePathname();
   const { currentUser } = useAuth();
@@ -54,7 +67,7 @@ export function AppSidebar({ isOpen, onClose, onOpenLocationDrawer }: AppSidebar
 
   if (!isOpen) return null;
 
-  const menuSections = [
+  const menuSections: SidebarSection[] = [
     {
       title: 'Discover',
       items: [
