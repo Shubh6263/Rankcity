@@ -3,7 +3,7 @@
  * Version: 1.1.0
  */
 
-const VERSION = 'rankcity-v1.2';
+const VERSION = 'rankcity-v1.3';
 const STATIC_CACHE = `${VERSION}-static`;
 const RUNTIME_CACHE = `${VERSION}-runtime`;
 const IMAGE_CACHE = `${VERSION}-images`;
@@ -116,6 +116,13 @@ self.addEventListener('fetch', (event) => {
     url.pathname.includes('/__nextjs_original-stack-frame')
   ) {
     return;
+  }
+
+  // In local development on localhost, bypass SW for HTML navigations to ensure live Next.js dev server updates
+  if (url.hostname === 'localhost' || url.hostname === '127.0.0.1') {
+    if (request.mode === 'navigate') {
+      return;
+    }
   }
 
   // 1. Navigation requests (HTML pages)
@@ -319,8 +326,16 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Default: Network fetch
-  event.respondWith(fetch(request));
+  // Default: Network fetch with error handling
+  event.respondWith(
+    fetch(request).catch((err) => {
+      console.warn('[PWA SW] Network fetch failed or cancelled:', request.url, err.message);
+      return new Response('', {
+        status: 408,
+        statusText: 'Request cancelled or network unavailable',
+      });
+    })
+  );
 });
 
 // Listen for messages from client

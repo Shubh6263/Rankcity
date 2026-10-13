@@ -48,6 +48,7 @@ export default function HomePage() {
   const { city: userCity, area: userArea, coords: userCoords, isLoading: isLocLoading, source: locSource, requestCurrentLocation } = useUserLocation();
   
   // Hydration-safe initial state (identical between server SSR and client first pass)
+  const [isMounted, setIsMounted] = useState(false);
   const [categories, setCategories] = useState<Category[]>([]);
   const [locations, setLocations] = useState<LocationHierarchy[]>([]);
   const [businesses, setBusinesses] = useState<Business[]>([]);
@@ -61,6 +62,7 @@ export default function HomePage() {
   }, [userCity]);
 
   useEffect(() => {
+    setIsMounted(true);
     // 1. Immediately hydrate from client cache (0ms instant display without SSR hydration mismatch)
     const cachedBiz = getCachedBusinesses();
     if (cachedBiz && cachedBiz.length > 0) {
@@ -289,7 +291,7 @@ export default function HomePage() {
             </Link>
           </div>
 
-          {isLoading ? (
+          {!isMounted || isLoading ? (
             <BusinessListSkeleton count={3} variant="grid" />
           ) : sponsoredItems.length === 0 ? (
             <div className="bg-neutral-50 rounded-2xl border border-neutral-200/80 p-8 text-center space-y-3">
@@ -361,7 +363,7 @@ export default function HomePage() {
             </Link>
           </div>
 
-          {isLoading ? (
+          {!isMounted || isLoading ? (
             <BusinessListSkeleton count={3} variant="grid" />
           ) : topRatedBusinesses.length === 0 ? (
             <div className="bg-white rounded-2xl border border-neutral-200/80 p-8 text-center space-y-2">
