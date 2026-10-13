@@ -43,12 +43,16 @@ export function PwaProvider({ children }: { children: React.ReactNode }) {
   const [isBannerDismissed, setIsBannerDismissed] = useState<boolean>(true); // start true to prevent flash
   const [showIosGuide, setShowIosGuide] = useState<boolean>(false);
 
-  // Check standalone mode (already installed)
+  // Check standalone mode (already installed or launched as PWA)
   const checkInstalled = useCallback(() => {
     if (typeof window === 'undefined') return false;
     const isStandaloneMatch = window.matchMedia('(display-mode: standalone)').matches;
     const isNavStandalone = (navigator as unknown as { standalone?: boolean }).standalone === true;
-    return isStandaloneMatch || isNavStandalone;
+    const hasPwaParam =
+      window.location.search.includes('source=pwa') ||
+      window.location.search.includes('source=pwa_shortcut') ||
+      window.matchMedia('(display-mode: window-controls-overlay)').matches;
+    return isStandaloneMatch || isNavStandalone || hasPwaParam;
   }, []);
 
   useEffect(() => {
@@ -61,9 +65,14 @@ export function PwaProvider({ children }: { children: React.ReactNode }) {
     window.addEventListener('online', handleOnline);
     window.addEventListener('offline', handleOffline);
 
-    // Check if installed
+    // Check if installed/PWA mode and tag html element for styling
     const installed = checkInstalled();
     setIsInstalled(installed);
+    if (installed) {
+      document.documentElement.classList.add('pwa-mode');
+    } else {
+      document.documentElement.classList.remove('pwa-mode');
+    }
 
     // Listen for display mode changes (e.g. user opens standalone window)
     const mediaQuery = window.matchMedia('(display-mode: standalone)');

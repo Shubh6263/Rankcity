@@ -1,8 +1,24 @@
+'use client';
+
 import React from 'react';
 import Link from 'next/link';
 import { InstallAppButton } from '@/components/pwa/InstallAppButton';
+import { usePwa } from '@/lib/pwa/context';
 
 export function Footer() {
+  const { isInstalled } = usePwa();
+
+  // In native PWA App mode: Render sleek minimalist app footer without web clutter
+  if (isInstalled) {
+    return (
+      <footer className="py-6 px-4 text-center text-[11px] text-neutral-400 border-t border-neutral-100 bg-neutral-50/50 pb-20">
+        <p className="font-semibold text-neutral-700">RankCity Mobile App</p>
+        <p className="mt-0.5 text-neutral-400">Discover Indore & Indian Cities • Powered by webloft</p>
+      </footer>
+    );
+  }
+
+  // In Website Browser mode: Render full rich multi-column desktop & web footer
   return (
     <footer className="bg-neutral-900 text-neutral-400 text-xs border-t border-neutral-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-10 pb-24 sm:pb-12">
