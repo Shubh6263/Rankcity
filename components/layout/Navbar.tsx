@@ -5,6 +5,8 @@ import Link from 'next/link';
 import { useRouter, usePathname } from 'next/navigation';
 import { useAuth } from '@/lib/auth/context';
 import { InstallAppButton } from '@/components/pwa/InstallAppButton';
+import { AppBottomNav } from '@/components/layout/AppBottomNav';
+import { MobileLocationDrawer } from '@/components/layout/MobileLocationDrawer';
 import {
   SignInButton,
   SignUpButton,
@@ -72,6 +74,7 @@ export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [activeMenu, setActiveMenu] = useState<'categories' | 'cities' | 'business' | 'citySelect' | 'account' | null>(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isLocationDrawerOpen, setIsLocationDrawerOpen] = useState(false);
 
   const navRef = useRef<HTMLDivElement>(null);
 
@@ -266,13 +269,6 @@ export function Navbar() {
     },
   ];
 
-  // Mobile bottom bar items matching Customer UI/UX architecture:
-  const mobileBottomNav = [
-    { label: 'Home', href: '/', icon: HomeIcon, isActive: pathname === '/' },
-    { label: 'Explore', href: '/explore', icon: Compass, isActive: pathname.startsWith('/explore') || pathname.includes('/hotels') },
-    { label: 'Saved', href: '/saved', icon: Heart, isActive: pathname === '/saved' },
-    { label: 'Account', href: '/account', icon: User, isActive: pathname === '/account' },
-  ];
 
   const toggleMenu = (menu: 'categories' | 'cities' | 'business' | 'citySelect' | 'account') => {
     setActiveMenu((prev) => (prev === menu ? null : menu));
@@ -533,7 +529,13 @@ export function Navbar() {
             <div className="relative">
               <button
                 type="button"
-                onClick={() => toggleMenu('citySelect')}
+                onClick={() => {
+                  if (typeof window !== 'undefined' && window.innerWidth < 1024) {
+                    setIsLocationDrawerOpen(true);
+                  } else {
+                    toggleMenu('citySelect');
+                  }
+                }}
                 className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-neutral-700 bg-neutral-50 hover:bg-neutral-100 border border-neutral-200 rounded-full transition-all cursor-pointer shadow-2xs"
               >
                 {locSource === 'browser_gps' ? (
@@ -776,27 +778,15 @@ export function Navbar() {
         )}
       </header>
 
-      {/* Customer Mobile Bottom Navigation Bar: Home | Explore | Saved | Account */}
-      <nav
-        aria-label="Mobile Navigation"
-        className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur-md border-t border-neutral-200 py-1.5 px-2 flex items-center justify-around shadow-lg"
-      >
-        {mobileBottomNav.map((item, idx) => {
-          const Icon = item.icon;
-          return (
-            <Link
-              key={idx}
-              href={item.href}
-              className={`flex flex-col items-center justify-center p-1.5 rounded-lg text-center transition-colors ${
-                item.isActive ? 'text-blue-600 font-bold' : 'text-neutral-500 hover:text-neutral-900'
-              }`}
-            >
-              <Icon className="w-5 h-5 mb-0.5" />
-              <span className="text-[10px] tracking-tight">{item.label}</span>
-            </Link>
-          );
-        })}
-      </nav>
+      {/* Floating Circular-Bordered App Bottom Navigation Bar */}
+      <AppBottomNav />
+
+      {/* Mobile City & Location Bottom Drawer */}
+      <MobileLocationDrawer
+        isOpen={isLocationDrawerOpen}
+        onClose={() => setIsLocationDrawerOpen(false)}
+        onSelectCity={handleCitySelect}
+      />
     </>
   );
 }
