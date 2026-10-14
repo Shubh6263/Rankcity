@@ -16,6 +16,7 @@ import {
   Globe,
   Mail,
   Eye,
+  ChevronLeft,
 } from 'lucide-react';
 
 export function CustomPhoneIcon({ className = 'w-4 h-4' }: { className?: string }) {
@@ -111,6 +112,9 @@ export function BusinessCard({
   isPriority = false,
 }: BusinessCardProps) {
   const [imgLoaded, setImgLoaded] = React.useState(false);
+  const [currentPhotoIndex, setCurrentPhotoIndex] = React.useState(0);
+  const touchStart = React.useRef<{ x: number; y: number } | null>(null);
+  const ignoreClickAfterSwipe = React.useRef(false);
   const rank = sponsoredRank || (isSponsored ? 1 : null);
 
   // 2-3 key decision-making services only
@@ -146,12 +150,41 @@ export function BusinessCard({
     400,
     65
   );
+  const cardPhotoUrls = Array.from(new Set([
+    business.coverImage || business.logo,
+    ...(business.cardPhotos ?? business.photos ?? []),
+  ].filter((photo): photo is string => Boolean(photo))));
+  const carouselPhotos = cardPhotoUrls.length > 0 ? cardPhotoUrls : [coverImg];
+  const activePhotoIndex = currentPhotoIndex % carouselPhotos.length;
+  const showPhoto = (index: number) => {
+    setImgLoaded(false);
+    setCurrentPhotoIndex((index + carouselPhotos.length) % carouselPhotos.length);
+  };
+  const handleTouchStart = (event: React.TouchEvent) => {
+    const touch = event.touches[0];
+    touchStart.current = { x: touch.clientX, y: touch.clientY };
+  };
+  const handleTouchEnd = (event: React.TouchEvent) => {
+    if (!touchStart.current || carouselPhotos.length < 2) return;
+    const touch = event.changedTouches[0];
+    const deltaX = touch.clientX - touchStart.current.x;
+    const deltaY = touch.clientY - touchStart.current.y;
+    touchStart.current = null;
+    if (Math.abs(deltaX) < 40 || Math.abs(deltaX) <= Math.abs(deltaY)) return;
+    showPhoto(activePhotoIndex + (deltaX < 0 ? 1 : -1));
+    ignoreClickAfterSwipe.current = true;
+    window.setTimeout(() => {
+      ignoreClickAfterSwipe.current = false;
+    }, 500);
+  };
 
   const isList = variant === 'list';
   const shouldPrioritize = isPriority || (isSponsored && (rank === 1 || rank === 2));
 
   return (
     <div
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
       className={`bg-white rounded-2xl transition-all duration-200 overflow-hidden group relative flex ${
         isList ? 'flex-col sm:flex-row items-stretch' : 'flex-col'
       } ${
@@ -160,9 +193,23 @@ export function BusinessCard({
           : 'border border-neutral-200 hover:border-neutral-300 shadow-2xs hover:shadow-sm'
       }`}
     >
+      <Link
+        href={`/business/${business.slug}`}
+        onClick={(event) => {
+          if (ignoreClickAfterSwipe.current) {
+            event.preventDefault();
+            ignoreClickAfterSwipe.current = false;
+            return;
+          }
+          handleAction('view');
+        }}
+        aria-label={`View profile of ${business.name}`}
+        className="absolute inset-0 z-0 rounded-2xl focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+      />
+
       {/* Photo Container - Well balanced aspect ratio */}
       <div
-        className={`relative overflow-hidden bg-neutral-100 shrink-0 ${
+        className={`relative overflow-hidden bg-neutral-100 shrink-0 pointer-events-none ${
           isList
             ? 'w-full sm:w-60 md:w-64 sm:min-h-[170px]'
             : 'w-full h-44 sm:h-48'
@@ -173,7 +220,8 @@ export function BusinessCard({
           <div className="absolute inset-0 bg-neutral-200/60 animate-pulse" />
         )}
         <img
-          src={coverImg}
+          src={getOptimizedImageUrl(carouselPhotos[activePhotoIndex], business.categoryId, 400, 65)}
+          key={carouselPhotos[activePhotoIndex]}
           alt={business.name}
           loading={shouldPrioritize ? 'eager' : 'lazy'}
           decoding="async"
@@ -182,6 +230,41 @@ export function BusinessCard({
             imgLoaded ? 'opacity-100' : 'opacity-0'
           }`}
         />
+
+        {carouselPhotos.length > 1 && (
+          <>
+            <button
+              type="button"
+              onClick={() => showPhoto(activePhotoIndex - 1)}
+              aria-label="Previous business photo"
+              className="absolute left-2 top-1/2 z-20 -translate-y-1/2 rounded-full bg-black/55 p-1.5 text-white shadow-sm transition-colors hover:bg-black/75 pointer-events-auto"
+            >
+              <ChevronLeft className="h-4 w-4" />
+            </button>
+            <button
+              type="button"
+              onClick={() => showPhoto(activePhotoIndex + 1)}
+              aria-label="Next business photo"
+              className="absolute right-2 top-1/2 z-20 -translate-y-1/2 rounded-full bg-black/55 p-1.5 text-white shadow-sm transition-colors hover:bg-black/75 pointer-events-auto"
+            >
+              <ChevronRight className="h-4 w-4" />
+            </button>
+            <div className="absolute bottom-2.5 left-1/2 z-20 flex -translate-x-1/2 items-center gap-1.5 pointer-events-auto">
+              {carouselPhotos.map((photo, index) => (
+                <button
+                  key={`${index}-${photo}`}
+                  type="button"
+                  onClick={() => showPhoto(index)}
+                  aria-label={`Show photo ${index + 1} of ${carouselPhotos.length}`}
+                  aria-current={index === activePhotoIndex ? 'true' : undefined}
+                  className={`h-1.5 rounded-full shadow-sm transition-all ${
+                    index === activePhotoIndex ? 'w-4 bg-white' : 'w-1.5 bg-white/65 hover:bg-white'
+                  } pointer-events-auto`}
+                />
+              ))}
+            </div>
+          </>
+        )}
 
         {/* Sponsored Label Banner */}
         {isSponsored && rank && (
@@ -210,7 +293,7 @@ export function BusinessCard({
             e.stopPropagation();
             onToggleFavorite?.(business.id, e);
           }}
-          className="absolute top-2.5 right-2.5 w-7 h-7 rounded-full bg-white/90 hover:bg-white backdrop-blur-xs flex items-center justify-center transition-all cursor-pointer shadow-xs text-neutral-500 hover:text-neutral-900 z-10"
+          className="absolute top-2.5 right-2.5 w-7 h-7 rounded-full bg-white/90 hover:bg-white backdrop-blur-xs flex items-center justify-center transition-all cursor-pointer shadow-xs text-neutral-500 hover:text-neutral-900 z-10 pointer-events-auto"
           aria-label="Save to bookmarks"
         >
           <Heart
@@ -235,14 +318,14 @@ export function BusinessCard({
       </div>
 
       {/* Content Section: Customer Decision-Making Information */}
-      <div className="p-4 sm:p-4.5 flex-1 min-w-0 flex flex-col justify-between space-y-2.5">
+      <div className="p-4 sm:p-4.5 flex-1 min-w-0 flex flex-col justify-between space-y-2.5 pointer-events-none">
         <div>
           {/* Header Row: Name & Verified badge */}
           <div className="flex items-center justify-between gap-2">
             <Link
               href={`/business/${business.slug}`}
               onClick={() => handleAction('view')}
-              className="text-base font-bold text-neutral-900 group-hover:text-blue-600 transition-colors truncate block flex-1"
+              className="relative z-10 pointer-events-auto text-base font-bold text-neutral-900 group-hover:text-blue-600 transition-colors truncate block flex-1"
             >
               {business.name}
             </Link>
@@ -287,7 +370,7 @@ export function BusinessCard({
               <a
                 href={phoneUrl}
                 onClick={() => handleAction('call')}
-                className="inline-flex items-center gap-1.5 hover:text-blue-600 transition-colors font-semibold"
+                className="relative z-10 pointer-events-auto inline-flex items-center gap-1.5 hover:text-blue-600 transition-colors font-semibold"
               >
                 <CustomPhoneIcon className="w-3.5 h-3.5 text-blue-600 shrink-0" />
                 <span>{business.phone}</span>
@@ -300,7 +383,7 @@ export function BusinessCard({
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => handleAction('whatsapp')}
-                className="inline-flex items-center gap-1.5 text-emerald-700 hover:text-emerald-800 transition-colors font-semibold"
+                className="relative z-10 pointer-events-auto inline-flex items-center gap-1.5 text-emerald-700 hover:text-emerald-800 transition-colors font-semibold"
               >
                 <CustomWhatsAppIcon className="w-3.5 h-3.5 shrink-0" />
                 <span>WhatsApp</span>
@@ -312,7 +395,7 @@ export function BusinessCard({
                 href={business.website}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 text-neutral-500 hover:text-neutral-900 transition-colors"
+                className="relative z-10 pointer-events-auto inline-flex items-center gap-1 text-neutral-500 hover:text-neutral-900 transition-colors"
                 title={business.website}
               >
                 <Globe className="w-3.5 h-3.5 text-neutral-400 shrink-0" />
@@ -347,7 +430,7 @@ export function BusinessCard({
           <a
             href={phoneUrl}
             onClick={() => handleAction('call')}
-            className="py-2 px-1 rounded-xl bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center transition-all shadow-2xs cursor-pointer text-center group/btn"
+            className="relative z-10 pointer-events-auto py-2 px-1 rounded-xl bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center transition-all shadow-2xs cursor-pointer text-center group/btn"
             title={`Call ${business.name}`}
             aria-label={`Call ${business.name}`}
           >
@@ -360,7 +443,7 @@ export function BusinessCard({
             target="_blank"
             rel="noopener noreferrer"
             onClick={() => handleAction('whatsapp')}
-            className="py-2 px-1 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white flex items-center justify-center transition-all shadow-2xs cursor-pointer text-center group/btn"
+            className="relative z-10 pointer-events-auto py-2 px-1 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white flex items-center justify-center transition-all shadow-2xs cursor-pointer text-center group/btn"
             title="Chat on WhatsApp"
             aria-label="Chat on WhatsApp"
           >
@@ -373,7 +456,7 @@ export function BusinessCard({
             target="_blank"
             rel="noopener noreferrer"
             onClick={() => handleAction('directions')}
-            className="py-2 px-1 rounded-xl border border-neutral-200 hover:bg-neutral-50 text-neutral-700 flex items-center justify-center transition-colors cursor-pointer text-center group/btn"
+            className="relative z-10 pointer-events-auto py-2 px-1 rounded-xl border border-neutral-200 hover:bg-neutral-50 text-neutral-700 flex items-center justify-center transition-colors cursor-pointer text-center group/btn"
             title="Get Directions on Map"
             aria-label="Get Directions on Map"
           >
@@ -384,7 +467,7 @@ export function BusinessCard({
           <Link
             href={`/business/${business.slug}`}
             onClick={() => handleAction('view')}
-            className="py-2 px-1 rounded-xl bg-neutral-100 hover:bg-neutral-200 text-neutral-800 flex items-center justify-center transition-colors cursor-pointer text-center group/btn"
+            className="relative z-10 pointer-events-auto py-2 px-1 rounded-xl bg-neutral-100 hover:bg-neutral-200 text-neutral-800 flex items-center justify-center transition-colors cursor-pointer text-center group/btn"
             title="View Full Profile"
             aria-label={`View full profile of ${business.name}`}
           >
@@ -395,4 +478,3 @@ export function BusinessCard({
     </div>
   );
 }
-

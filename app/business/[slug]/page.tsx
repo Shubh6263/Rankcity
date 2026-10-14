@@ -341,13 +341,11 @@ export default function BusinessProfilePage({ params }: BusinessProfilePageProps
     currentUser.role === 'BUSINESS_OWNER' ||
     currentUser.role === 'BUSINESS_MANAGER';
 
-  const gallery = [
-    business.coverImage || 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1200',
-    'https://images.unsplash.com/photo-1582719508461-905c673771fd?w=800',
-    'https://images.unsplash.com/photo-1590490360182-c33d57733427?w=800',
-    'https://images.unsplash.com/photo-1542314831-068cd1dbfeeb?w=800',
-    'https://images.unsplash.com/photo-1571896349842-33c89424de2d?w=800',
-  ];
+  const profileGalleryPhotos = business.profilePhotos ?? business.photos ?? [];
+  const gallery = Array.from(new Set([
+    business.coverImage || business.logo || 'https://images.unsplash.com/photo-1566073771259-6a8506099945?w=1200',
+    ...profileGalleryPhotos,
+  ]));
 
   const mapQuery = encodeURIComponent(`${business.name} ${business.address} ${business.city}`);
   const mapEmbedUrl = `https://maps.google.com/maps?q=${mapQuery}&t=&z=14&ie=UTF8&iwloc=&output=embed`;

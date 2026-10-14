@@ -40,13 +40,6 @@ interface HierarchicalLocationSelectorProps {
 
 const ALL_COUNTRIES = [
   'India',
-  'United States',
-  'United Kingdom',
-  'Canada',
-  'Australia',
-  'United Arab Emirates',
-  'Singapore',
-  'Other',
 ];
 
 export function HierarchicalLocationSelector({
@@ -721,7 +714,7 @@ export function HierarchicalLocationSelector({
                   Suggest a Missing Location
                 </h3>
                 <p className="text-xs text-neutral-500">
-                  Can't find your town, village or locality? Submit it for quick admin verification.
+                  Can&apos;t find your town, village or locality? Submit it for quick admin verification.
                 </p>
               </div>
             </div>

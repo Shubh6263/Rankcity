@@ -75,6 +75,10 @@ class DatabaseStore {
           description: b.description || '',
           categoryId: b.category_id,
           locationId: b.location_id,
+          stateId: b.state_id,
+          districtId: b.district_id,
+          cityId: b.city_id,
+          localityId: b.locality_id,
           address: b.address,
           locality: b.locality,
           city: b.city,
@@ -93,6 +97,8 @@ class DatabaseStore {
           amenities: Array.isArray(b.amenities) ? b.amenities : [],
           coverImage: b.cover_image,
           photos: Array.isArray(b.photos) ? b.photos : [],
+          cardPhotos: Array.isArray(b.card_photos) ? b.card_photos : undefined,
+          profilePhotos: Array.isArray(b.profile_photos) ? b.profile_photos : undefined,
           rating: Number(b.rating) || 5.0,
           reviewCount: Number(b.review_count) || 0,
           isVerified: b.is_verified ?? true,
@@ -682,6 +688,10 @@ class DatabaseStore {
     if (biz.description !== undefined) supabaseUpdates.description = biz.description;
     if (biz.categoryId !== undefined) supabaseUpdates.category_id = biz.categoryId;
     if (biz.locationId !== undefined) supabaseUpdates.location_id = biz.locationId;
+    if (biz.stateId !== undefined) supabaseUpdates.state_id = biz.stateId;
+    if (biz.districtId !== undefined) supabaseUpdates.district_id = biz.districtId;
+    if (biz.cityId !== undefined) supabaseUpdates.city_id = biz.cityId;
+    if (biz.localityId !== undefined) supabaseUpdates.locality_id = biz.localityId;
     if (biz.address !== undefined) supabaseUpdates.address = biz.address;
     if (biz.locality !== undefined) supabaseUpdates.locality = biz.locality;
     if (biz.city !== undefined) supabaseUpdates.city = biz.city;
@@ -697,6 +707,8 @@ class DatabaseStore {
     if (biz.services !== undefined) supabaseUpdates.services = biz.services;
     if (biz.amenities !== undefined) supabaseUpdates.amenities = biz.amenities;
     if (biz.photos !== undefined) supabaseUpdates.photos = biz.photos;
+    if (biz.cardPhotos !== undefined) supabaseUpdates.card_photos = biz.cardPhotos;
+    if (biz.profilePhotos !== undefined) supabaseUpdates.profile_photos = biz.profilePhotos;
     if (biz.coverImage !== undefined) supabaseUpdates.cover_image = biz.coverImage;
     if (biz.logo !== undefined) supabaseUpdates.logo = biz.logo;
 

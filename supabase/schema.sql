@@ -70,6 +70,8 @@ CREATE TABLE IF NOT EXISTS public.businesses (
   services JSONB DEFAULT '[]'::jsonb,
   amenities JSONB DEFAULT '[]'::jsonb,
   photos JSONB DEFAULT '[]'::jsonb,
+  card_photos JSONB,
+  profile_photos JSONB,
   cover_image TEXT,
   logo TEXT,
   rating NUMERIC(3, 2) NOT NULL DEFAULT 5.0,
@@ -278,6 +280,12 @@ CREATE TABLE IF NOT EXISTS public.pincodes (
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
+ALTER TABLE public.businesses
+  ADD COLUMN IF NOT EXISTS state_id TEXT REFERENCES public.states(id),
+  ADD COLUMN IF NOT EXISTS district_id TEXT REFERENCES public.districts(id),
+  ADD COLUMN IF NOT EXISTS city_id TEXT REFERENCES public.cities(id),
+  ADD COLUMN IF NOT EXISTS locality_id TEXT REFERENCES public.localities(id);
+
 -- LOCATION IMPORT LOGS
 CREATE TABLE IF NOT EXISTS public.location_import_logs (
   id TEXT PRIMARY KEY DEFAULT gen_random_uuid()::text,
@@ -350,4 +358,3 @@ CREATE POLICY "Service Role All Localities" ON public.localities FOR ALL USING (
 CREATE POLICY "Service Role All Pincodes" ON public.pincodes FOR ALL USING (true);
 CREATE POLICY "Service Role All Import Logs" ON public.location_import_logs FOR ALL USING (true);
 CREATE POLICY "Service Role All Suggestions" ON public.location_suggestions FOR ALL USING (true);
-

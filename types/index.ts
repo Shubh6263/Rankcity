@@ -203,6 +203,8 @@ export interface Business {
   logo?: string;
   coverImage?: string;
   photos?: string[];
+  cardPhotos?: string[];
+  profilePhotos?: string[];
   openingHours?: string;
   priceRange?: '₹' | '₹₹' | '₹₹₹' | '₹₹₹₹';
   services?: string[];

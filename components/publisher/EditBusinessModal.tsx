@@ -1,8 +1,8 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Business, Category, LocationHierarchy } from '@/types';
-import { ALL_INDIAN_STATES } from '@/lib/location/states';
+import { HierarchicalLocationSelector, LocationSelectionValue } from '@/components/location/HierarchicalLocationSelector';
 import { X, Save, Building2, MapPin, Phone, Globe, Clock, Sparkles, Image as ImageIcon, Plus, Trash2, Upload } from 'lucide-react';
 
 interface EditBusinessModalProps {
@@ -14,28 +14,36 @@ interface EditBusinessModalProps {
   onSuccess: (updatedBusiness: Business) => void;
 }
 
-export const EditBusinessModal: React.FC<EditBusinessModalProps> = ({
+export const EditBusinessModal: React.FC<EditBusinessModalProps> = (props) => {
+  if (!props.isOpen || !props.business) return null;
+
+  return <EditBusinessForm key={props.business.id} {...props} business={props.business} />;
+};
+
+const EditBusinessForm: React.FC<Omit<EditBusinessModalProps, 'business'> & { business: Business }> = ({
   business,
-  isOpen,
   categories,
   locations,
   onClose,
   onSuccess,
 }) => {
-  if (!isOpen || !business) return null;
-
   const [name, setName] = useState(business.name || '');
   const [description, setDescription] = useState(business.description || '');
   const [fullDescription, setFullDescription] = useState(business.fullDescription || business.description || '');
   const [businessType, setBusinessType] = useState(business.businessType || 'Retail Store');
   const [categoryId, setCategoryId] = useState(business.categoryId || '');
   const [subcategoryId, setSubcategoryId] = useState(business.subcategoryId || '');
-  const [locationId, setLocationId] = useState(business.locationId || '');
   const [address, setAddress] = useState(business.address || '');
   const [locality, setLocality] = useState(business.locality || '');
   const [city, setCity] = useState(business.city || 'Indore');
   const [state, setState] = useState(business.state || 'Madhya Pradesh');
   const [pincode, setPincode] = useState(business.pincode || '452010');
+  const [country, setCountry] = useState(business.country || 'India');
+  const [stateId, setStateId] = useState(business.stateId || '');
+  const [districtId, setDistrictId] = useState(business.districtId || '');
+  const [cityId, setCityId] = useState(business.cityId || '');
+  const [landmark, setLandmark] = useState(business.landmark || '');
+  const [buildingInfo, setBuildingInfo] = useState(business.buildingInfo || '');
   const [phone, setPhone] = useState(business.phone || '');
   const [whatsapp, setWhatsapp] = useState(business.whatsapp || '');
   const [email, setEmail] = useState(business.email || '');
@@ -48,51 +56,13 @@ export const EditBusinessModal: React.FC<EditBusinessModalProps> = ({
   const [coverImage, setCoverImage] = useState(business.coverImage || '');
   const [logo, setLogo] = useState(business.logo || '');
   const [photos, setPhotos] = useState<string[]>(business.photos || []);
+  const [cardPhotos, setCardPhotos] = useState<string[]>(business.cardPhotos ?? business.photos ?? []);
+  const [profilePhotos, setProfilePhotos] = useState<string[]>(business.profilePhotos ?? business.photos ?? []);
   const [newPhotoUrl, setNewPhotoUrl] = useState('');
 
   const [activeTab, setActiveTab] = useState<'basic' | 'location' | 'contact' | 'services'>('basic');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  const [availableCities, setAvailableCities] = useState<Array<{ id: string; name: string }>>([]);
-  const [loadingCities, setLoadingCities] = useState(false);
-
-  useEffect(() => {
-    if (!state) return;
-    let isCancelled = false;
-    setLoadingCities(true);
-
-    fetch('/api/locations/states?limit=100')
-      .then((res) => res.json())
-      .then((data) => {
-        if (isCancelled) return;
-        const matchingState = (data.items || []).find(
-          (s: any) =>
-            s.name.toLowerCase() === state.toLowerCase() ||
-            s.code.toLowerCase() === state.toLowerCase()
-        );
-        const stateId = matchingState?.id;
-        const url = stateId
-          ? `/api/locations/cities?stateId=${stateId}&limit=200`
-          : `/api/locations/cities?limit=200`;
-
-        return fetch(url).then((r) => r.json());
-      })
-      .then((cityData) => {
-        if (isCancelled) return;
-        if (cityData?.items) {
-          setAvailableCities(cityData.items);
-        }
-      })
-      .catch(() => {})
-      .finally(() => {
-        if (!isCancelled) setLoadingCities(false);
-      });
-
-    return () => {
-      isCancelled = true;
-    };
-  }, [state]);
 
   const selectedCategoryObj = categories.find((c) => c.id === categoryId);
 
@@ -102,12 +72,32 @@ export const EditBusinessModal: React.FC<EditBusinessModalProps> = ({
       setError('You can add up to 10 gallery photos.');
       return;
     }
-    setPhotos((prev) => [...prev, newPhotoUrl.trim()]);
+    const photo = newPhotoUrl.trim();
+    setPhotos((prev) => [...prev, photo]);
+    setCardPhotos((prev) => [...prev, photo]);
+    setProfilePhotos((prev) => [...prev, photo]);
     setNewPhotoUrl('');
   };
 
   const handleRemovePhoto = (indexToRemove: number) => {
+    const photo = photos[indexToRemove];
     setPhotos((prev) => prev.filter((_, i) => i !== indexToRemove));
+    setCardPhotos((prev) => prev.filter((selectedPhoto) => selectedPhoto !== photo));
+    setProfilePhotos((prev) => prev.filter((selectedPhoto) => selectedPhoto !== photo));
+  };
+
+  const handleLocationChange = (location: LocationSelectionValue) => {
+    setCountry(location.country);
+    setStateId(location.stateId);
+    setState(location.stateName);
+    setDistrictId(location.districtId);
+    setCityId(location.cityId);
+    setCity(location.cityName);
+    setLocality(location.locality);
+    setPincode(location.pincode);
+    setAddress(location.address);
+    setLandmark(location.landmark || '');
+    setBuildingInfo(location.buildingInfo || '');
   };
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>, target: 'cover' | 'logo' | 'gallery') => {
@@ -132,6 +122,8 @@ export const EditBusinessModal: React.FC<EditBusinessModalProps> = ({
           return;
         }
         setPhotos((prev) => [...prev, result]);
+        setCardPhotos((prev) => [...prev, result]);
+        setProfilePhotos((prev) => [...prev, result]);
       }
     };
     reader.readAsDataURL(file);
@@ -140,6 +132,11 @@ export const EditBusinessModal: React.FC<EditBusinessModalProps> = ({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+    if (!stateId || !districtId || !cityId) {
+      setError('Select a verified state, district, and city before saving this listing.');
+      setActiveTab('location');
+      return;
+    }
     setIsSubmitting(true);
 
     try {
@@ -163,12 +160,18 @@ export const EditBusinessModal: React.FC<EditBusinessModalProps> = ({
           businessType,
           categoryId,
           subcategoryId: subcategoryId || undefined,
-          locationId,
+          locationId: cityId,
+          country,
+          stateId,
+          districtId,
+          cityId,
           address,
           locality,
           city,
-          state: state || undefined,
+          state,
           pincode,
+          landmark,
+          buildingInfo,
           phone,
           whatsapp,
           email,
@@ -181,6 +184,8 @@ export const EditBusinessModal: React.FC<EditBusinessModalProps> = ({
           coverImage: coverImage.trim() ? coverImage : undefined,
           logo: logo.trim() ? logo : undefined,
           photos: photos,
+          cardPhotos,
+          profilePhotos,
         }),
       });
 
@@ -406,112 +411,23 @@ export const EditBusinessModal: React.FC<EditBusinessModalProps> = ({
                 />
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label className="block font-semibold text-neutral-700 mb-1">
-                    State / UT (India) *
-                  </label>
-                  <select
-                    value={state}
-                    onChange={(e) => setState(e.target.value)}
-                    required
-                    className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none bg-white font-medium"
-                  >
-                    {ALL_INDIAN_STATES.map((s) => (
-                      <option key={s} value={s}>
-                        {s}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <div className="flex items-center justify-between mb-1">
-                    <label className="block font-semibold text-neutral-700">
-                      City / Town *
-                    </label>
-                    {loadingCities && (
-                      <span className="text-[10px] text-blue-600 font-medium">Loading cities...</span>
-                    )}
-                  </div>
-                  {availableCities.length > 0 ? (
-                    <div className="space-y-1.5">
-                      <select
-                        value={availableCities.some((c) => c.name.toLowerCase() === city.toLowerCase()) ? city : '__custom__'}
-                        onChange={(e) => {
-                          if (e.target.value !== '__custom__') {
-                            setCity(e.target.value);
-                            const matched = availableCities.find((c) => c.name === e.target.value);
-                            if (matched) setLocationId(matched.id);
-                          } else {
-                            setCity('');
-                          }
-                        }}
-                        className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none bg-white font-medium text-neutral-900"
-                      >
-                        <option value="">-- Select City in {state} ({availableCities.length} available) --</option>
-                        {availableCities.map((c) => (
-                          <option key={c.id} value={c.name}>
-                            {c.name}
-                          </option>
-                        ))}
-                        <option value="__custom__">+ Enter Other / Custom City...</option>
-                      </select>
-
-                      {(!availableCities.some((c) => c.name.toLowerCase() === city.toLowerCase()) || city === '') && (
-                        <input
-                          type="text"
-                          value={city}
-                          onChange={(e) => {
-                            setCity(e.target.value);
-                            setLocationId(`cty_${e.target.value.toLowerCase().replace(/[^a-z0-9]+/g, '_')}`);
-                          }}
-                          placeholder={`Type city name in ${state} (e.g. ${availableCities[0]?.name || 'City'})`}
-                          required
-                          className="w-full px-3 py-2 border border-blue-400 bg-blue-50/20 rounded-lg focus:outline-none text-neutral-900 font-medium"
-                        />
-                      )}
-                    </div>
-                  ) : (
-                    <input
-                      type="text"
-                      value={city}
-                      onChange={(e) => {
-                        setCity(e.target.value);
-                        setLocationId(`cty_${e.target.value.toLowerCase().replace(/[^a-z0-9]+/g, '_')}`);
-                      }}
-                      placeholder={`Enter City / Town in ${state}`}
-                      required
-                      className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none font-medium"
-                    />
-                  )}
-                </div>
-
-                <div>
-                  <label className="block font-semibold text-neutral-700 mb-1">
-                    Locality / Area
-                  </label>
-                  <input
-                    type="text"
-                    value={locality}
-                    onChange={(e) => setLocality(e.target.value)}
-                    placeholder="Vijay Nagar"
-                    className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none"
-                  />
-                </div>
-
-                <div>
-                  <label className="block font-semibold text-neutral-700 mb-1">
-                    PIN Code
-                  </label>
-                  <input
-                    type="text"
-                    value={pincode}
-                    onChange={(e) => setPincode(e.target.value)}
-                    className="w-full px-3 py-2 border border-neutral-300 rounded-lg focus:outline-none font-mono"
-                  />
-                </div>
-              </div>
+              <HierarchicalLocationSelector
+                value={{
+                  country,
+                  stateId,
+                  stateName: state,
+                  districtId,
+                  districtName: '',
+                  cityId,
+                  cityName: city,
+                  locality,
+                  pincode,
+                  address,
+                  landmark,
+                  buildingInfo,
+                }}
+                onChange={handleLocationChange}
+              />
 
               <div>
                 <label className="block font-semibold text-neutral-700 mb-1">
@@ -750,7 +666,7 @@ export const EditBusinessModal: React.FC<EditBusinessModalProps> = ({
                       <span>Business Photos Gallery ({photos.length}/10)</span>
                     </label>
                     <p className="text-[10px] text-neutral-500">
-                      Add photos of interior, exterior, menu/products, team & work samples.
+                      Choose separately which photos appear in business-card swipes and on the full profile.
                     </p>
                   </div>
 
@@ -785,22 +701,45 @@ export const EditBusinessModal: React.FC<EditBusinessModalProps> = ({
                   </button>
                 </div>
 
-                {/* Photo Gallery Grid */}
+                {/* Photo selection */}
                 {photos.length > 0 ? (
                   <div className="grid grid-cols-3 sm:grid-cols-4 gap-2 pt-1">
                     {photos.map((p, idx) => (
-                      <div key={idx} className="relative group rounded-lg overflow-hidden border border-neutral-200 aspect-video bg-neutral-100">
-                        <img src={p} alt={`Photo ${idx + 1}`} className="w-full h-full object-cover" />
-                        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
+                      <div key={`${idx}-${p}`} className="min-w-0 space-y-1.5">
+                        <div className="relative rounded-lg overflow-hidden border border-neutral-200 aspect-video bg-neutral-100">
+                          <img src={p} alt={`Photo ${idx + 1}`} className="w-full h-full object-cover" />
                           <button
                             type="button"
                             onClick={() => handleRemovePhoto(idx)}
-                            className="p-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-md shadow-xs cursor-pointer"
+                            className="absolute top-1 right-1 p-1.5 bg-rose-600 hover:bg-rose-700 text-white rounded-md shadow-xs cursor-pointer"
                             title="Delete Photo"
+                            aria-label={`Delete photo ${idx + 1}`}
                           >
                             <Trash2 className="w-3.5 h-3.5" />
                           </button>
                         </div>
+                        <label className="flex items-center gap-1 text-[10px] leading-tight text-neutral-700 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={cardPhotos.includes(p)}
+                            onChange={(e) => setCardPhotos((prev) =>
+                              e.target.checked ? [...prev, p] : prev.filter((photo) => photo !== p)
+                            )}
+                            className="accent-blue-600"
+                          />
+                          Card carousel
+                        </label>
+                        <label className="flex items-center gap-1 text-[10px] leading-tight text-neutral-700 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={profilePhotos.includes(p)}
+                            onChange={(e) => setProfilePhotos((prev) =>
+                              e.target.checked ? [...prev, p] : prev.filter((photo) => photo !== p)
+                            )}
+                            className="accent-blue-600"
+                          />
+                          Profile gallery
+                        </label>
                       </div>
                     ))}
                   </div>

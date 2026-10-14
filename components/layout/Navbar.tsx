@@ -275,7 +275,7 @@ export function Navbar() {
             <button
               type="button"
               onClick={() => setIsSidebarOpen(true)}
-              className="-ml-1 p-2 text-neutral-700 hover:text-neutral-950 hover:bg-neutral-100 rounded-xl transition-colors cursor-pointer shrink-0 flex items-center justify-center"
+              className="-ml-1 p-2 text-neutral-700 hover:text-neutral-950 hover:bg-neutral-100 rounded-xl transition-colors cursor-pointer shrink-0 flex items-center justify-center lg:hidden"
               aria-label="Open sidebar menu"
               title="Open Menu"
             >

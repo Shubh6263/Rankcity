@@ -96,7 +96,7 @@ export function AppSidebar({ isOpen, onClose, onOpenLocationDrawer }: AppSidebar
       onClick={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
-      className="fixed inset-0 z-[70] bg-black/60 backdrop-blur-xs flex animate-in fade-in duration-200"
+      className="fixed inset-0 z-[70] bg-black/60 backdrop-blur-xs flex animate-in fade-in duration-200 lg:hidden"
     >
       <div className="relative w-80 max-w-[85vw] h-full bg-white text-neutral-900 shadow-2xl flex flex-col justify-between overflow-hidden animate-in slide-in-from-left duration-300">
         {/* Top Header Card */}

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
+import { locationDb } from '@/lib/location/service';
 
 export async function GET(
   req: NextRequest,
@@ -67,6 +68,18 @@ export async function PATCH(
   try {
     const { id } = await params;
     const body = await req.json();
+
+    if (body.stateId || body.districtId || body.cityId || body.villageId) {
+      const hierarchyCheck = locationDb.validateHierarchy({
+        stateId: body.stateId,
+        districtId: body.districtId,
+        cityId: body.cityId,
+        villageId: body.villageId,
+      });
+      if (!hierarchyCheck.valid) {
+        return NextResponse.json({ error: hierarchyCheck.error }, { status: 400 });
+      }
+    }
 
     const biz = db.getBusinessById(id) || db.getBusinessBySlug(id);
     if (!biz) {

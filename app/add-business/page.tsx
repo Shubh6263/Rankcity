@@ -32,7 +32,6 @@ import {
   Check,
 } from 'lucide-react';
 
-import { ALL_INDIAN_STATES } from '@/lib/location/states';
 import { HierarchicalLocationSelector } from '@/components/location/HierarchicalLocationSelector';
 
 const BUSINESS_TYPES = [
@@ -67,8 +66,6 @@ const ALL_COUNTRIES = [
   'Sri Lanka',
   'Other',
 ];
-
-const INDIAN_STATES_AND_UTS = ALL_INDIAN_STATES;
 
 const ATTRIBUTES_BY_CATEGORY: Record<string, string[]> = {
   cat_dining: [
@@ -146,6 +143,7 @@ export default function AddBusinessPage() {
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [createdBusinessSlug, setCreatedBusinessSlug] = useState<string | null>(null);
+  const [locationError, setLocationError] = useState<string | null>(null);
 
   // Form State matching Complete Registration Specification
   const [formData, setFormData] = useState({
@@ -164,8 +162,8 @@ export default function AddBusinessPage() {
 
     // Step 2: Location (RankCity Core Data)
     country: 'India',
-    stateId: 'st_23',
-    state: 'Madhya Pradesh',
+    stateId: '',
+    state: '',
     districtId: '',
     districtName: '',
     cityId: '',
@@ -272,6 +270,14 @@ export default function AddBusinessPage() {
   const completionPercent = calculateCompletion();
 
   const handleNext = () => {
+    if (
+      currentStep === 2 &&
+      (!formData.stateId || !formData.districtId || !formData.cityId || !formData.city)
+    ) {
+      setLocationError('Please select a state, district, and city from the verified location lists.');
+      return;
+    }
+    setLocationError(null);
     if (currentStep < 4) {
       setCurrentStep((prev) => prev + 1);
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -712,6 +718,7 @@ export default function AddBusinessPage() {
                   buildingInfo: formData.buildingInfo,
                 }}
                 onChange={(loc) => {
+                  setLocationError(null);
                   setFormData((prev) => ({
                     ...prev,
                     country: loc.country,
@@ -731,6 +738,11 @@ export default function AddBusinessPage() {
                   }));
                 }}
               />
+              {locationError && (
+                <p role="alert" className="rounded-xl border border-rose-200 bg-rose-50 px-3 py-2 text-xs font-medium text-rose-700">
+                  {locationError}
+                </p>
+              )}
 
                 {/* Google Maps Directions Link */}
                 <div className="bg-blue-50/50 border border-blue-100 rounded-2xl p-4 space-y-2">
